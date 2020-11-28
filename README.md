@@ -25,4 +25,4 @@ Rodrigo García.
 
 
 Repositorio GitHub
-https://github.com/Ivan0886/APPAndroid
+https://github.com/Ivan0886/APPCovid
