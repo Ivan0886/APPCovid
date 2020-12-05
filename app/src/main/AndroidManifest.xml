@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".views.NewsActivity"></activity>
-        <activity android:name=".views.MainActivity"></activity>
-        <activity android:name=".views.StateActivity">
+        <activity android:name=".views.StateActivity"></activity>
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

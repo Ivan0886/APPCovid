@@ -86,14 +86,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
+                    android:onClick="volverMainActivity"
                     android:text="@string/button_volver" />
 
                 <Button
-                    android:id="@+id/button_text"
+                    android:id="@+id/button_covid"
                     style="@style/TextAppearance.AppCompat.Widget.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
+                    android:onClick="confirmarCovid"
                     android:text="@string/button_text" />
             </LinearLayout>
 

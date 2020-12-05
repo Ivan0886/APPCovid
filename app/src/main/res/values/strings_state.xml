@@ -29,4 +29,7 @@
     </string>
     <string name="button_text">Tengo COVID-19</string>
     <string name="button_volver">Atras</string>
+    <string name="dialog_title">¿Tienes COVID-19?</string>
+    <string name="dialog_text">Si confirmas que tienes COVID-19, se bloqueara el boton durante 14 dias</string>
+    <string name="toast_text">Gracias por ayudarnos a vencer al COVID. Por favor, sigue las intrucciones sanitarias correspondientes.</string>
 </resources>
