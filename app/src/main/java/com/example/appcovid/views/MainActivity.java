@@ -1,9 +1,7 @@
 package com.example.appcovid.views;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
 import com.example.appcovid.R;
 
 public class MainActivity extends AppCompatActivity {

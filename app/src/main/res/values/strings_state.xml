@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- XML que hace referencia a activity_state.xml y StateActivity.java -->
+<resources>
+    <string name="title">Estado</string>
+    <string name="information_title">Información</string>
+    <string name="information_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="notifications_title">Notificaciones</string>
+    <string name="notifications_text">
+        * Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \n* Donec nec mollis ex, et elementum quam.
+        \n* Morbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \n* Nullam ac ornare libero, sed porta eros.
+    </string>
+    <string name="button_text">Tengo COVID-19</string>
+    <string name="button_volver">Atras</string>
+</resources>
