@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">APPCovid</string>
-    <string name="button_no">NO</string>
-    <string name="button_si">SI</string>
-    <string name="button_ok">OK</string>
-    <string name="button_back">Atras</string>
+    <string name="text_no">NO</string>
+    <string name="text_si">SI</string>
+    <string name="text_ok">OK</string>
+    <string name="text_back">Atras</string>
 </resources>

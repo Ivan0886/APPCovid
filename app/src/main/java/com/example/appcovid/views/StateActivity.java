@@ -1,7 +1,6 @@
 package com.example.appcovid.views;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,25 +34,23 @@ public class StateActivity extends AppCompatActivity {
         boolean valor = true;
 
         if (!fecha.equalsIgnoreCase("unknown")) {
-            valor = LocalDate.parse(fecha).isAfter(LocalDate.parse(fecha).plusDays(14));
+            valor = LocalDate.now().isAfter(LocalDate.parse(fecha).plusDays(14));
         }
 
         return valor;
     }
 
     public void volverMainActivity(View v){
-       /* Intent intent = new Intent(StateActivity.this, MainActivity.class);
-        startActivity(intent);*/
-
+       // startActivity(new Intent(StateActivity.this, MainActivity.class));
         finish();
     }
 
     public void confirmarCovid(View v){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_title);
-        builder.setMessage(R.string.dialog_text);
+        builder.setTitle(R.string.dialog_title_state);
+        builder.setMessage(R.string.dialog_text_state);
 
-        builder.setPositiveButton(R.string.button_si, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.text_si, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // Este codigo permite guardar la fecha aunque se destruya la actividad
                 SharedPreferences.Editor myEditor = preferences.edit();
@@ -63,18 +60,17 @@ public class StateActivity extends AppCompatActivity {
                 boton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
                 dialog.dismiss();
 
-                mostrarToast(R.string.toast_text);
+                mostrarToast(R.string.toast_text_state);
             }
         });
 
-        builder.setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
         });
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.create().show();
     }
 
     private void mostrarToast(int mensaje) {

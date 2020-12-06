@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- XML que hace referencia a activity_state.xml y StateActivity.java -->
 <resources>
-    <string name="title_news">Noticias</string>
+    <string name="news_title">Noticias</string>
     <string name="button_new">Leer noticia</string>
     <string name="new1_title">Noticia 1</string>
     <string name="new1_text">
