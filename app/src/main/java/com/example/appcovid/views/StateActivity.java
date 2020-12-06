@@ -42,8 +42,10 @@ public class StateActivity extends AppCompatActivity {
     }
 
     public void volverMainActivity(View v){
-        Intent intent = new Intent(StateActivity.this, MainActivity.class);
-        startActivity(intent);
+       /* Intent intent = new Intent(StateActivity.this, MainActivity.class);
+        startActivity(intent);*/
+
+        finish();
     }
 
     public void confirmarCovid(View v){

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_title">CovidRecord</string>
+    <string name="main_news_button_text">Noticias</string>
+    <string name="main_restriction_button_text">Restricciones</string>
+    <string name="main_state_button_text">Estado</string>
+    <string name="main_dialog_title">Permisos y datos</string>
+    
+    
+</resources>

@@ -3,4 +3,5 @@
     <string name="button_no">NO</string>
     <string name="button_si">SI</string>
     <string name="button_ok">OK</string>
+    <string name="button_back">Atras</string>
 </resources>
