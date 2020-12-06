@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- XML que hace referencia a activity_state.xml y StateActivity.java -->
+<resources>
+    <string name="title_news">Noticias</string>
+    <string name="button_new">Leer noticia</string>
+    <string name="new1_title">Noticia 1</string>
+    <string name="new1_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="new2_title">Noticia 2</string>
+    <string name="new2_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="new3_title">Noticia 3</string>
+    <string name="new3_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+</resources>
