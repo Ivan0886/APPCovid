@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#CEDDEC"
     tools:context=".views.MainActivity">
 
     <TextView
@@ -33,7 +34,9 @@
             android:id="@+id/button_news"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners"
             android:onClick="onClickLanzarActivity"
+
             android:text="@string/main_news_button_text" />
 
         <Space
@@ -44,6 +47,7 @@
             android:id="@+id/button_restriction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners"
             android:onClick="onClickLanzarActivity"
             android:text="@string/main_restriction_button_text" />
 
@@ -55,6 +59,8 @@
             android:id="@+id/button_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners"
+
             android:onClick="onClickLanzarActivity"
             android:text="@string/main_state_button_text" />
     </LinearLayout>

@@ -10,11 +10,13 @@
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorFondo"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
             <TextView
@@ -95,16 +97,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/image_new2"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:contentDescription="@string/new2_title"
-                        app:srcCompat="@drawable/img_prueba" />
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -131,6 +127,14 @@
                             android:layout_height="wrap_content"
                             android:text="@string/button_new" />
                     </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/image_new2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="0"
+                        android:contentDescription="@string/new2_title"
+                        app:srcCompat="@drawable/img_prueba" />
 
                 </LinearLayout>
 
@@ -192,19 +196,23 @@
 
             </androidx.cardview.widget.CardView>
 
+            <Button
+                android:id="@+id/button_volver_news"
+                style="@style/TextAppearance.AppCompat.Widget.Button"
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:layout_margin="20dp"
+                android:onClick="volverMainActivity"
+                android:text="@string/text_back" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@drawable/abc_vector_test" />
+
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/button_volver_news"
-        style="@style/TextAppearance.AppCompat.Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:onClick="volverMainActivity"
-        android:text="@string/text_back"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
