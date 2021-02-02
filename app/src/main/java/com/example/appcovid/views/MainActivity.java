@@ -2,6 +2,8 @@ package com.example.appcovid.views;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO: Pedir permisos de app
+
 
                 SharedPreferences.Editor myEditor = preferences.edit();
                 myEditor.putBoolean("confirmacionPermisos", true); // Se guarda la confirmacion del alert
