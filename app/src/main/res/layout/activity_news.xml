@@ -46,6 +46,7 @@
                         android:id="@+id/image_new1"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:layout_margin="5dp"
                         android:contentDescription="@string/new1_title"
                         app:srcCompat="@drawable/img_prueba" />
 
@@ -62,16 +63,6 @@
                             android:textSize="25sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/new1_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLength="500"
-                            android:maxLines="3"
-                            android:text="@string/new1_text" />
-
                         <Button
                             android:id="@+id/button_new1"
                             android:layout_width="match_parent"
@@ -80,7 +71,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
 
             </androidx.cardview.widget.CardView>
 
@@ -111,16 +101,6 @@
                             android:textSize="25sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/new2_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLength="500"
-                            android:maxLines="3"
-                            android:text="@string/new2_text" />
-
                         <Button
                             android:id="@+id/button_new2"
                             android:layout_width="match_parent"
@@ -132,12 +112,12 @@
                         android:id="@+id/image_new2"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:layout_margin="5dp"
                         android:layout_weight="0"
                         android:contentDescription="@string/new2_title"
                         app:srcCompat="@drawable/img_prueba" />
 
                 </LinearLayout>
-
 
             </androidx.cardview.widget.CardView>
 
@@ -158,6 +138,7 @@
                         android:id="@+id/image_new3"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:layout_margin="5dp"
                         android:contentDescription="@string/new3_title"
                         app:srcCompat="@drawable/img_prueba" />
 
@@ -174,16 +155,6 @@
                             android:textSize="25sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/new3_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLength="500"
-                            android:maxLines="3"
-                            android:text="@string/new3_text" />
-
                         <Button
                             android:id="@+id/button_new3"
                             android:layout_width="match_parent"
@@ -192,7 +163,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
 
             </androidx.cardview.widget.CardView>
 

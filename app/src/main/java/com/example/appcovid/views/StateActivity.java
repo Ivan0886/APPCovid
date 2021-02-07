@@ -14,8 +14,9 @@ import org.threeten.bp.LocalDate;
 
 public class StateActivity extends AppCompatActivity {
 
-    Button boton;
-    SharedPreferences preferences;
+    private Button boton;
+    private SharedPreferences preferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class StateActivity extends AppCompatActivity {
         // TODO ¿Crear un fragmento en las notificaciones?
     }
 
+
     private boolean comprobarTiempoConfirmacionCovid() {
         String fecha = preferences.getString("fechaCovid", "unknown");
         boolean valor = true;
@@ -40,12 +42,14 @@ public class StateActivity extends AppCompatActivity {
         return valor;
     }
 
-    public void volverMainActivity(View v){
+
+    public void volverMainActivity(View v) {
        // startActivity(new Intent(StateActivity.this, MainActivity.class));
         finish();
     }
 
-    public void confirmarCovid(View v){
+
+    public void confirmarCovid(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_state);
         builder.setMessage(R.string.dialog_text_state);
@@ -72,6 +76,7 @@ public class StateActivity extends AppCompatActivity {
 
         builder.create().show();
     }
+
 
     private void mostrarToast(int mensaje) {
         Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();

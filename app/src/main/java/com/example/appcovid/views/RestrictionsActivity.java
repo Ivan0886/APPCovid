@@ -14,6 +14,7 @@ public class RestrictionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_restrictions);
     }
 
+
     public void OnClickVolver(View v) {
        finish();
     }

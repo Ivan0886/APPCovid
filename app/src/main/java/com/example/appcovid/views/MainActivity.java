@@ -15,19 +15,20 @@ import com.example.appcovid.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         if (!preferences.getBoolean("confirmacionPermisos", false)) {
             lanzarAlert();
         }
     }
+
 
     private void lanzarAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.create().show();
     }
+
 
     public void onClickLanzarActivity(View v) {
         int id = v.getId();
