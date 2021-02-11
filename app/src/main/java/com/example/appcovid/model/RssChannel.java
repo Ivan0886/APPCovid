@@ -9,9 +9,6 @@ import org.simpleframework.xml.Root;
 @Root(name = "channel", strict = false)
 public class RssChannel {
 
-    @Element
-    private String title;
-
     @ElementList(inline = true, required = false)
     private List<RssItem> items;
 

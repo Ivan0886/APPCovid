@@ -1,25 +1,25 @@
 package com.example.appcovid.views;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.OnRssResponse;
+import com.example.appcovid.controller.RssAdapter;
 import com.example.appcovid.controller.RssController;
 import com.example.appcovid.model.RssFeed;
 
-import com.squareup.picasso.Picasso;
-
 public class NewsActivity extends AppCompatActivity {
+
+    private RssAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,45 +27,36 @@ public class NewsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news);
         RssController controller = new RssController();
 
+        // Se construye el RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.list_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new RssAdapter(this);
+
+        // Se añaden los datos al adaptador mediante el RssController
         controller.start(new OnRssResponse() {
             @Override
             public void getRss(RssFeed rss) {
-                pintarNoticias(rss);
+                if(rss != null) {
+                    adapter.addData(rss.getChannel().getItems());
+                } else {
+                    lanzarError("Ha surgido un problema llamando a la API");
+                }
             }
         });
-    }
 
-
-    public void pintarNoticias(RssFeed apiResponse) {
-        if (apiResponse != null) {
-            for(int i = 0; i < 3; i++) { // TODO Aumentar numero noticias
-                TextView text = findViewById(getResources().getIdentifier("new" + (i + 1) + "_title", "id", getPackageName()));
-                Button button = findViewById(getResources().getIdentifier("button_new" + (i + 1), "id", getPackageName()));
-                ImageView image = findViewById(getResources().getIdentifier("image_new" + (i + 1), "id", getPackageName()));
-
-                text.setText(apiResponse.getChannel().getItems().get(i).getTitle());
-                // A cada boton se le pasa el link correspondiente para abrirlo con WebView
-                abrirNoticia(button, apiResponse.getChannel().getItems().get(i).getLink());
-                // Se pinta la imagen correspondiente
-                Picasso.get().load(apiResponse.getChannel().getItems().get(i).getImage().getUrl()).fit().centerCrop().error(R.drawable.img_prueba).into(image);
-            }
-        } else {
-            lanzarError("Ha surgido un problema llamando a la API");
-        }
-
-    }
-
-
-    public void abrirNoticia(Button b, final String s) {
-        b.setOnClickListener(new View.OnClickListener() {
+        // A cada item se le da su propio link de la noticia
+        adapter.setClickListener(new RssAdapter.ItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(View view, int position) {
                 Intent i = new Intent();
                 i.setAction(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(s));
+                i.setData(Uri.parse(adapter.getItem(position).getLink()));
                 startActivity(i);
             }
         });
+
+        recyclerView.setAdapter(adapter);
     }
 
 

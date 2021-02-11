@@ -6,183 +6,43 @@
     android:layout_height="match_parent"
     tools:context=".views.NewsActivity">
 
-    <ScrollView
-        android:id="@+id/scrollView2"
+
+    <LinearLayout
+        android:id="@+id/list_news"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorFondo"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/titleNews"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
+            android:layout_margin="20dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:text="@string/news_title"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/titleNews"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="@string/news_title"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/new1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                app:cardBackgroundColor="#B0026F93">
+        </androidx.recyclerview.widget.RecyclerView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/image_new1"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_margin="5dp"
-                        android:contentDescription="@string/new1_title"
-                        app:srcCompat="@drawable/img_prueba" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/new1_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/new1_title"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/button_new1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_new" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/new2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                app:cardBackgroundColor="#B0026F93">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/new2_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/new2_title"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/button_new2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_new" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/image_new2"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_margin="5dp"
-                        android:layout_weight="0"
-                        android:contentDescription="@string/new2_title"
-                        app:srcCompat="@drawable/img_prueba" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/new3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                app:cardBackgroundColor="#B0026F93">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/image_new3"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_margin="5dp"
-                        android:contentDescription="@string/new3_title"
-                        app:srcCompat="@drawable/img_prueba" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/new3_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/new3_title"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/button_new3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/button_new" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <Button
-                android:id="@+id/button_volver_news"
-                style="@style/TextAppearance.AppCompat.Widget.Button"
-                android:layout_width="88dp"
-                android:layout_height="48dp"
-                android:layout_margin="20dp"
-                android:onClick="volverMainActivity"
-                android:text="@string/text_back" />
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                app:srcCompat="@drawable/abc_vector_test" />
-
-        </LinearLayout>
-    </ScrollView>
+        <Button
+            android:id="@+id/button_volver_news"
+            style="@style/TextAppearance.AppCompat.Widget.Button"
+            android:layout_width="88dp"
+            android:layout_height="48dp"
+            android:layout_margin="20dp"
+            android:onClick="volverMainActivity"
+            android:text="@string/text_back" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,7 +18,6 @@ public class RssController {
 
 
     public void start(OnRssResponse callback) {
-
         Retrofit retrofit = builder.build();
         RssService rssService = retrofit.create(RssService.class);
         Call<RssFeed> callAsync = rssService.getFeed();
