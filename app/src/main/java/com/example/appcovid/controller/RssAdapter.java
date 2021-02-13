@@ -28,35 +28,6 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.ViewHolder> {
     }
 
 
-    // Infla el diseño de fila de xml cuando sea necesario
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.element_news, parent, false);
-        return new ViewHolder(view);
-    }
-
-
-    // Une los datos a los TextView y es ImageView en cada fila
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.textView.setText(mData.get(position).getTitle());
-        Picasso.get().load(mData.get(position).getImage().getUrl()).fit().centerCrop().error(R.drawable.img_prueba).into(holder.image);
-    }
-
-
-    // Numero de RssItem
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-
-    public void addData(List<RssItem> items) {
-        mData.addAll(items);
-        notifyDataSetChanged();
-    }
-
-
     // Almacena y recicla las vistas a medida que se desplazan fuera de la pantalla
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView textView;
@@ -74,6 +45,42 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.ViewHolder> {
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
+    }
+
+
+    // Infla el diseño de la fila xml cuando sea necesario
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.element_news, parent, false);
+        return new ViewHolder(view);
+    }
+
+
+    // Une los datos TextView e ImageView en cada fila
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.textView.setText(mData.get(position).getTitle());
+        Picasso.get().
+                load(mData.get(position).
+                        getImage().
+                        getUrl()).
+                fit().
+                centerCrop().
+                error(R.drawable.img_prueba).
+                into(holder.image);
+    }
+
+
+    // Numero de RssItem
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
+
+
+    public void addData(List<RssItem> items) {
+        mData.addAll(items);
+        notifyDataSetChanged();
     }
 
 
