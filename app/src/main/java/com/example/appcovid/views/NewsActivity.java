@@ -1,6 +1,8 @@
 package com.example.appcovid.views;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,51 +14,58 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.appcovid.R;
-import com.example.appcovid.controller.OnRssResponse;
+import com.example.appcovid.controller.NewsViewModel;
 import com.example.appcovid.controller.RssAdapter;
-import com.example.appcovid.controller.RssController;
-import com.example.appcovid.model.RssFeed;
+import com.example.appcovid.model.RssItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewsActivity extends AppCompatActivity {
 
     private RssAdapter adapter;
+    private NewsViewModel datosNews;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        RssController controller = new RssController();
 
         // Se construye el RecyclerView
         RecyclerView recyclerView = findViewById(R.id.list_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Se construye el adaptador y se añade al RecyclerView
         adapter = new RssAdapter(this);
+        recyclerView.setAdapter(adapter);
 
-        // Se añaden los datos al adaptador mediante el RssController
-        controller.start(new OnRssResponse() {
+        // Se construye el ViewModel
+        datosNews = new ViewModelProvider(this).get(NewsViewModel.class);
+
+        // Se comprueba si los datos han cambiado
+        datosNews.getDatos().observe(this, new Observer<List<RssItem>>() {
             @Override
-            public void getRss(RssFeed rss) {
-                if(rss != null) {
-                    adapter.addData(rss.getChannel().getItems());
+            public void onChanged(List<RssItem> rssItems) {
+                // Si la llamada ha ido bien
+                if(rssItems != null) {
+                    adapter.addData(new ArrayList(rssItems));
+
+                    // A cada item se le da su propio link de la noticia
+                    adapter.setClickListener(new RssAdapter.ItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            Intent i = new Intent();
+                            i.setAction(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(adapter.getItem(position).getLink()));
+                            startActivity(i);
+                        }
+                    });
                 } else {
                     lanzarError("Ha surgido un problema llamando a la API");
                 }
             }
         });
-
-        // A cada item se le da su propio link de la noticia
-        adapter.setClickListener(new RssAdapter.ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent i = new Intent();
-                i.setAction(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(adapter.getItem(position).getLink()));
-                startActivity(i);
-            }
-        });
-
-        recyclerView.setAdapter(adapter);
     }
 
 

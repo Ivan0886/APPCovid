@@ -38,6 +38,8 @@ dependencies {
     // Libreria retrofit y simpleXML
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-simplexml:2.6.1'
+    // Libreria ciclos de vida
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
     // Libreria Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     testImplementation 'junit:junit:4.12'
