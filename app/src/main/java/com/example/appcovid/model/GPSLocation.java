@@ -22,6 +22,8 @@ import com.example.appcovid.R;
 import com.example.appcovid.controller.GPSService;
 import com.example.appcovid.controller.RestrictionsService;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -106,17 +108,17 @@ public class GPSLocation extends Service implements LocationListener {
                                         RestrictionsService resService = retrofit.create(RestrictionsService.class);
 
                                         // Se construye la llamada
-                                        Call<RestrictionFeed> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
                                         // Se hace la llamada a la API
-                                        callAsync.enqueue(new Callback<RestrictionFeed>() {
+                                        callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
                                             @Override
-                                            public void onResponse(Call<RestrictionFeed> call, Response<RestrictionFeed> response) {
-                                                Log.d("ESTADO", response.body().getItems().get(0).getmTitulo());
+                                            public void onResponse(Call<List<RestrictionFeed>> call, Response<List<RestrictionFeed>> response) {
+                                                Log.d("ESTADO", response.body().get(0).getItems().get(0).getmTitulo());
                                             }
 
                                             @Override
-                                            public void onFailure(Call<RestrictionFeed> call, Throwable t) {
+                                            public void onFailure(Call<List<RestrictionFeed>> call, Throwable t) {
 
                                             }
                                         });
