@@ -5,17 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.appcovid.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences preferences;
+    private SharedPreferences mPreferences;
 
 
     @Override
@@ -23,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        if (!preferences.getBoolean("confirmacionPermisos", false)) {
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if (!mPreferences.getBoolean("confirmacionPermisos", false)) {
             lanzarAlert();
         }
     }
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //TODO: Pedir permisos de app
 
-                SharedPreferences.Editor myEditor = preferences.edit();
+                SharedPreferences.Editor myEditor = mPreferences.edit();
                 myEditor.putBoolean("confirmacionPermisos", true); // Se guarda la confirmacion del alert
                 myEditor.commit();
             }

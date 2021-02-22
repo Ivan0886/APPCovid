@@ -59,11 +59,11 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.ViewHolder> {
     // Une los datos TextView e ImageView en cada fila
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.textView.setText(mData.get(position).getTitle());
+        holder.textView.setText(mData.get(position).getmTitle());
         Picasso.get().
                 load(mData.get(position).
-                        getImage().
-                        getUrl()).
+                        getmImage().
+                        getmUrl()).
                 fit().
                 centerCrop().
                 error(R.drawable.img_prueba).

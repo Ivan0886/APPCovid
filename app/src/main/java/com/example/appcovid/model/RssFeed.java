@@ -6,11 +6,11 @@ import org.simpleframework.xml.Root;
 @Root(name = "rss", strict = false)
 public class RssFeed {
 
-    @Element
-    private RssChannel channel;
+    @Element(name="channel")
+    private RssChannel mChannel;
 
 
-    public RssChannel getChannel() {
-        return channel;
+    public RssChannel getmChannel() {
+        return mChannel;
     }
 }

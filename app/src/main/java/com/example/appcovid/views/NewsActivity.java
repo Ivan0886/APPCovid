@@ -23,8 +23,8 @@ import java.util.List;
 
 public class NewsActivity extends AppCompatActivity {
 
-    private RssAdapter adapter;
-    private NewsViewModel datosNews;
+    private RssAdapter mAdapter;
+    private NewsViewModel mDatosNews;
 
 
     @Override
@@ -37,27 +37,27 @@ public class NewsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Se construye el adaptador y se añade al RecyclerView
-        adapter = new RssAdapter(this);
-        recyclerView.setAdapter(adapter);
+        mAdapter = new RssAdapter(this);
+        recyclerView.setAdapter(mAdapter);
 
         // Se construye el ViewModel
-        datosNews = new ViewModelProvider(this).get(NewsViewModel.class);
+        mDatosNews = new ViewModelProvider(this).get(NewsViewModel.class);
 
         // Se comprueba si los datos han cambiado
-        datosNews.getDatos().observe(this, new Observer<List<RssItem>>() {
+        mDatosNews.getmDatos().observe(this, new Observer<List<RssItem>>() {
             @Override
             public void onChanged(List<RssItem> rssItems) {
                 // Si la llamada ha ido bien
                 if(rssItems != null) {
-                    adapter.addData(new ArrayList(rssItems));
+                    mAdapter.addData(new ArrayList(rssItems));
 
                     // A cada item se le da su propio link de la noticia
-                    adapter.setClickListener(new RssAdapter.ItemClickListener() {
+                    mAdapter.setClickListener(new RssAdapter.ItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
                             Intent i = new Intent();
                             i.setAction(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(adapter.getItem(position).getLink()));
+                            i.setData(Uri.parse(mAdapter.getItem(position).getmLink()));
                             startActivity(i);
                         }
                     });

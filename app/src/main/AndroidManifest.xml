@@ -3,7 +3,10 @@
     package="com.example.appcovid">
 
     <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Los permisos de ACCESS_COARSE_LOCATION/ACCESS_FINE_LOCATION no son requeridos para el uso
+    de Google Maps Android API v2, aunque se recomiendan. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"

@@ -6,17 +6,17 @@ import org.simpleframework.xml.Attribute;
 @Element
 public class RssImage {
 
-    @Attribute
-    private String url;
+    @Attribute(name="url")
+    private String mUrl;
 
-    @Attribute
-    private String length;
+    @Attribute(name="length")
+    private String mLength;
 
-    @Attribute
-    private String type;
+    @Attribute(name="type")
+    private String mType;
 
 
-    public String getUrl() {
-        return url;
+    public String getmUrl() {
+        return mUrl;
     }
 }

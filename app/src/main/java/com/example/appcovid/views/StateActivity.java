@@ -14,8 +14,8 @@ import org.threeten.bp.LocalDate;
 
 public class StateActivity extends AppCompatActivity {
 
-    private Button boton;
-    private SharedPreferences preferences;
+    private Button mBoton;
+    private SharedPreferences mPreferences;
 
 
     @Override
@@ -23,16 +23,16 @@ public class StateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
-        boton = (Button) findViewById(R.id.button_covid);
-        boton.setEnabled(comprobarTiempoConfirmacionCovid()); // Se comprueba si han pasado 14 dias
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
+        mBoton = (Button) findViewById(R.id.button_covid);
+        mBoton.setEnabled(comprobarTiempoConfirmacionCovid()); // Se comprueba si han pasado 14 dias
 
         // TODO ¿Crear un fragmento en las notificaciones?
     }
 
 
     private boolean comprobarTiempoConfirmacionCovid() {
-        String fecha = preferences.getString("fechaCovid", "unknown");
+        String fecha = mPreferences.getString("fechaCovid", "unknown");
         boolean valor = true;
 
         if (!fecha.equalsIgnoreCase("unknown")) {
@@ -57,11 +57,11 @@ public class StateActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.text_si, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // Este codigo permite guardar la fecha aunque se destruya la actividad
-                SharedPreferences.Editor myEditor = preferences.edit();
+                SharedPreferences.Editor myEditor = mPreferences.edit();
                 myEditor.putString("fechaCovid", LocalDate.now().toString()); // Se guarda la fecha que el usuario confirma que tiene el COVID
                 myEditor.commit();
 
-                boton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
+                mBoton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
                 dialog.dismiss();
 
                 mostrarToast(R.string.toast_text_state);

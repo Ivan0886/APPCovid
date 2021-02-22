@@ -6,27 +6,27 @@ import org.simpleframework.xml.Root;
 @Root(name = "item", strict = false)
 public class RssItem {
 
-    @Element
-    private String title;
+    @Element(name="title")
+    private String mTitle;
 
     @Element(name="enclosure")
-    private RssImage image;
+    private RssImage mImage;
 
-    @Element
-    private String link;
+    @Element(name="link")
+    private String mLink;
 
 
-    public String getTitle() {
-        return title;
+    public String getmTitle() {
+        return mTitle;
     }
 
 
-    public RssImage getImage() {
-        return image;
+    public RssImage getmImage() {
+        return mImage;
     }
 
 
-    public String getLink() {
-        return link;
+    public String getmLink() {
+        return mLink;
     }
 }
