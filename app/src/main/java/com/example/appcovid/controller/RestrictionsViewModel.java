@@ -38,8 +38,6 @@ public class RestrictionsViewModel extends ViewModel {
     }
 
     private void loadDatos(GPSLocation mGpsLocation) {
-        // Se construye el retrofit
-
         if (mGpsLocation != null) {
 
             // Se construye el retrofit
@@ -58,6 +56,7 @@ public class RestrictionsViewModel extends ViewModel {
                 @Override
                 public void onResponse(Call<GPSFeed> call, Response<GPSFeed> response) {
                     if (response.isSuccessful()) {
+
                         // La API responde correctamente
                         Retrofit retrofit = new Retrofit
                                 .Builder()
@@ -66,9 +65,17 @@ public class RestrictionsViewModel extends ViewModel {
                                 .build();
                         RestrictionsService resService = retrofit.create(RestrictionsService.class);
 
-                        // Se construye la llamada
-                        // Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
-                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("cadiz", "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                        String city = response.body().getmCity();
+
+                        if(city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas")) {
+                            city = response.body().getmCity().replace(" ", "-");
+                        } else {
+                            city = response.body().getmCity().replace(" ", "+");
+                        }
+
+                        // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)
+                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                        //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
                         // Se hace la llamada a la API
                         callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
@@ -79,10 +86,6 @@ public class RestrictionsViewModel extends ViewModel {
                                 } else {
                                     mDatos.postValue(null);
                                 }
-                                    //mRestriciones = response.body().get(0).getItems();
-                                    //Log.d("ESTADO", getmRestriciones().get(0).getmTitulo());
-                                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
-                                    //Log.d("ESTADO", response.body().get(0).getItems().get(0).getmTitulo());
                             }
                             @Override
                             public void onFailure(Call<List<RestrictionFeed>> call, Throwable t) {
@@ -90,20 +93,15 @@ public class RestrictionsViewModel extends ViewModel {
                             }
                         });
                     } else {
-                        Log.d("ESTADO2","ssgsgs");
+                        Log.d("ESTADO","Ha fallado :)");
                     }
-                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
                 }
 
                 @Override
                 public void onFailure(Call<GPSFeed> call, Throwable t) {
-                    Log.d("ESTADO3","fsddf");
+                    Log.d("ESTADO","Ha fallado :)");
                 }
             });
         }
-    }
-
-    public void setGPSLocation() {
-        this.mGpsLocation = mGpsLocation;
     }
 }
