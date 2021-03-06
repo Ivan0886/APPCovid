@@ -7,42 +7,39 @@
     tools:context=".views.NewsActivity">
 
 
-    <LinearLayout
-        android:id="@+id/list_news"
+    <TextView
+        android:id="@+id/titleNews"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="55dp"
+        android:layout_margin="20dp"
         android:gravity="center"
-        android:orientation="vertical"
+        android:text="@string/news_title"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_volver_news"
+        style="@style/TextAppearance.AppCompat.Widget.Button"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_margin="20dp"
+        android:onClick="volverMainActivity"
+        android:text="@string/text_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_view"
+        android:layout_width="406dp"
+        android:layout_height="434dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_volver_news"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/titleNews">
 
-        <TextView
-            android:id="@+id/titleNews"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_margin="20dp"
-            android:gravity="center"
-            android:text="@string/news_title"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <Button
-            android:id="@+id/button_volver_news"
-            style="@style/TextAppearance.AppCompat.Widget.Button"
-            android:layout_width="88dp"
-            android:layout_height="48dp"
-            android:layout_margin="20dp"
-            android:onClick="volverMainActivity"
-            android:text="@string/text_back" />
-    </LinearLayout>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

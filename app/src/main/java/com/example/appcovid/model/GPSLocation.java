@@ -22,6 +22,7 @@ import com.example.appcovid.R;
 import com.example.appcovid.controller.GPSService;
 import com.example.appcovid.controller.RestrictionsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -46,13 +47,14 @@ public class GPSLocation extends Service implements LocationListener {
 
     private double mLatitude;
     private double mLongitude;
+    private List<RestrictionsItems> mRestriciones;
 
     protected LocationManager locationManager;
 
 
     public GPSLocation(Context mContext) {
         this.mContext = mContext;
-        getLocation();
+        this.mLocalizacion = getLocation();
     }
 
 
@@ -82,7 +84,8 @@ public class GPSLocation extends Service implements LocationListener {
                     if (locationManager != null) {
                         mLocalizacion = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                        if (mLocalizacion != null) {
+                        /*if (mLocalizacion != null) {
+
                             // Se construye el retrofit
                             Retrofit retrofit = new Retrofit
                                     .Builder()
@@ -108,23 +111,32 @@ public class GPSLocation extends Service implements LocationListener {
                                         RestrictionsService resService = retrofit.create(RestrictionsService.class);
 
                                         // Se construye la llamada
-                                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                                        // Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("cadiz", "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
                                         // Se hace la llamada a la API
                                         callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
                                             @Override
                                             public void onResponse(Call<List<RestrictionFeed>> call, Response<List<RestrictionFeed>> response) {
-                                                Log.d("ESTADO", response.body().get(0).getItems().get(0).getmTitulo());
+                                                if (response.isSuccessful()) {
+                                                    mRestriciones = response.body().get(0).getItems();
+                                                    //Log.d("ESTADO", getmRestriciones().get(0).getmTitulo());
+                                                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
+                                                    //Log.d("ESTADO", response.body().get(0).getItems().get(0).getmTitulo());
+                                                } else {
+                                                    Log.d("ESTADO2","ssgsgs");
+                                                }
                                             }
-
                                             @Override
                                             public void onFailure(Call<List<RestrictionFeed>> call, Throwable t) {
 
                                             }
                                         });
+                                        //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
                                     } else {
                                         Log.d("ESTADO2","ssgsgs");
                                     }
+                                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
                                 }
 
                                 @Override
@@ -133,9 +145,9 @@ public class GPSLocation extends Service implements LocationListener {
                                 }
                             });
 
-                            mLatitude = mLocalizacion.getLatitude();
-                            mLongitude = mLocalizacion.getLongitude();
-                        }
+                            // mLatitude = mLocalizacion.getLatitude();
+                            // mLongitude = mLocalizacion.getLongitude();
+                        }*/
                     }
                 }
             }
@@ -143,7 +155,13 @@ public class GPSLocation extends Service implements LocationListener {
             e.printStackTrace();
         }
 
+        //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
         return mLocalizacion;
+    }
+
+
+    public List<RestrictionsItems> getmRestriciones() {
+        return mRestriciones;
     }
 
 
