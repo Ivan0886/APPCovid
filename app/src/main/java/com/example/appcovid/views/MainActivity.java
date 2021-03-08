@@ -47,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void lanzarAlert(int titulo, int texto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        mAndroidId = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
-        if(titulo == mTituloID) {
+        if(titulo != mTituloID) {
             builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -64,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(titulo == mTituloID) {
+                    mAndroidId = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
                     SharedPreferences.Editor myEditor = mPreferences.edit();
                     myEditor.putString("confirmacionID", mAndroidId); // Se guarda la confirmacion del alert
                     myEditor.commit();
