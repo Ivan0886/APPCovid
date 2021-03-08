@@ -4,5 +4,8 @@
     <string name="main_news_button_text">Noticias</string>
     <string name="main_restriction_button_text">Restricciones</string>
     <string name="main_state_button_text">Estado</string>
-    <string name="main_dialog_title">Permisos y datos</string>
+    <string name="main_dialog_title">Identificador único</string>
+    <string name="main_dialog_text">Al usar esta aplicacíon, no se accederán a tus datos personales. En su lugar se usará la ID del dispositivo.</string>
+    <string name="main_dialog_titleBT">Bluetooth</string>
+    <string name="main_dialog_textBT">El Bluetooth está desactivado, por favor activelo.</string>
 </resources>

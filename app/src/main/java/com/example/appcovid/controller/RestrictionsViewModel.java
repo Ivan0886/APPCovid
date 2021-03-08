@@ -67,12 +67,14 @@ public class RestrictionsViewModel extends ViewModel {
 
                         String city = response.body().getmCity();
 
+                        // TODO Añadir el resto de ciudades de España
                         if(city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas")) {
                             city = response.body().getmCity().replace(" ", "-");
                         } else {
                             city = response.body().getmCity().replace(" ", "+");
                         }
 
+                        // TODO Consultar otra API que no limite a 500 la llamada o pagar por ella
                         // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)
                         Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
                         //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");
@@ -93,13 +95,15 @@ public class RestrictionsViewModel extends ViewModel {
                             }
                         });
                     } else {
-                        Log.d("ESTADO","Ha fallado :)");
+                        mDatos.postValue(null);
+                        //Log.d("ESTADO","Ha fallado :)");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<GPSFeed> call, Throwable t) {
-                    Log.d("ESTADO","Ha fallado :)");
+                    mDatos.postValue(null);
+                    //Log.d("ESTADO","Ha fallado :)");
                 }
             });
         }
