@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
                     myEditor.putString("confirmacionID", mAndroidId); // Se guarda la confirmacion del alert
                     myEditor.commit();
                 } else {
+                    mBluetoothAdapter.enable();
                     dialog.dismiss();
-                    finish();
                 }
             }
         });
