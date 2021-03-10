@@ -8,4 +8,5 @@
     <string name="main_dialog_text">Al usar esta aplicacíon, no se accederán a tus datos personales. En su lugar se usará la ID del dispositivo.</string>
     <string name="main_dialog_titleBT">Bluetooth</string>
     <string name="main_dialog_textBT">El Bluetooth está desactivado, por favor activelo.</string>
+    <string name="main_dialog_textBTError">Este dispositivo no soporta Bluetooth. Se va a proceder a cerrar la aplicación.</string>
 </resources>

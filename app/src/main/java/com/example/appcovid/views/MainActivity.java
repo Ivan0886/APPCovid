@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
     private String mAndroidId;
-    private int mTituloID, mTextoID, mTituloBT, mTextoBT;
+    private int mTituloID, mTextoID, mTituloBT, mTextoBT, mTextoBTError;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     @Override
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mTextoID = R.string.main_dialog_text;
         mTituloBT = R.string.main_dialog_titleBT;
         mTextoBT = R.string.main_dialog_textBT;
+        mTextoBTError = R.string.main_dialog_textBTError;
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
@@ -38,10 +39,17 @@ public class MainActivity extends AppCompatActivity {
             lanzarAlert(mTituloID, mTextoID);
         }
 
-        // Se comprueba si el Bluetooth está activado
-        if(!mBluetoothAdapter.isEnabled()) {
-            lanzarAlert(mTituloBT, mTextoBT);
+        // Se comprueba si el Bluetooth está activado o esta soportado por el dispositivo
+        if (mBluetoothAdapter != null) {
+            if(!mBluetoothAdapter.isEnabled()) {
+                lanzarAlert(mTituloBT, mTextoBT);
+            }
+        } else {
+            lanzarAlert(mTituloBT, mTextoBTError);
         }
+
+        // TODO Si tiene conexion BT con otro dispositivo durante mas de 15 min, guardar IDs y fecha en la base de datos
+        //  (el otro dispositivo tiene que tener la APP también)
     }
 
 
@@ -49,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
-        if(titulo != mTituloID) {
+        if(titulo != mTituloID && texto != mTextoBTError) {
             builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -67,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor myEditor = mPreferences.edit();
                     myEditor.putString("confirmacionID", mAndroidId); // Se guarda la confirmacion del alert
                     myEditor.commit();
+                } else if(texto == mTextoBTError) {
+                    dialog.dismiss();
+                    finish();
                 } else {
                     mBluetoothAdapter.enable();
                     dialog.dismiss();
