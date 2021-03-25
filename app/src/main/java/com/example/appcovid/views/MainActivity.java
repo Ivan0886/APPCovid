@@ -12,41 +12,41 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.provider.Settings.Secure;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.BluetoothReceiver;
+import com.example.appcovid.model.DeviceList;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences mPreferences;
-    private String mAndroidId;
-    private int mTituloID, mTextoID, mTituloBT, mTextoBT, mTextoBTError;
+    private int mTituloBT, mTextoBT, mTextoBTError;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private BluetoothReceiver mBluetoothReceiver;
-    private static final int mBluetoothRequestCode = 0;
+    //private BluetoothReceiver mBluetoothReceiver;
+    public static int REQUEST_BLUETOOTH = 1;
+    private DeviceList deviceList;
+    //private static final int mBluetoothRequestCode = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTituloID = R.string.main_dialog_title;
-        mTextoID = R.string.main_dialog_text;
         mTituloBT = R.string.main_dialog_titleBT;
         mTextoBT = R.string.main_dialog_textBT;
         mTextoBTError = R.string.main_dialog_textBTError;
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-        mBluetoothReceiver = new BluetoothReceiver();
+        //mBluetoothReceiver = new BluetoothReceiver();
 
         // Se comprueba si la ID del dispositivo ya se ha guardado
-        if (!mPreferences.contains("confirmacionID")) {
+        /*if (!mPreferences.contains("confirmacionID")) {
             lanzarAlert(mTituloID, mTextoID);
-        }
+        }*/
 
         // Se comprueba si el Bluetooth está activado o esta soportado por el dispositivo
         if (mBluetoothAdapter != null) {
@@ -57,21 +57,21 @@ public class MainActivity extends AppCompatActivity {
             lanzarAlert(mTituloBT, mTextoBTError);
         }
 
-        // TODO: Si tiene conexion BT con otro dispositivo durante mas de 15 min, guardar IDs y fecha en la base de datos
-        //  (el otro dispositivo tiene que tener la APP también)
+        IntentFilter filtro = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+
+        deviceList = new DeviceList(mBluetoothAdapter);
+        registerReceiver(deviceList.bReciever, filtro);
 
         //Se informa al usuario que el dispositivo se va a abrir a ser descubierto por otros
         //Si la longitud del extra se pone a 0, el dispositivo siempre se podrá descubrir
-        Intent discoverableIntent =
+        /*Intent discoverableIntent =
                 new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-        startActivity(discoverableIntent);
+        startActivity(discoverableIntent);*/
 
 
         // Intent que lanza la función onReceive del receiver, donde realizaremos el tratamiento
-        // de los datos
-        IntentFilter filtro = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mBluetoothReceiver, filtro);
+        // de los datos*/
 
     }
 
@@ -79,30 +79,24 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
-        if(titulo != mTituloID && texto != mTextoBTError) {
-            builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    finish();
-                }
-            });
-        }
+        builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
 
         builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(titulo == mTituloID) {
-                    mAndroidId = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
-                    SharedPreferences.Editor myEditor = mPreferences.edit();
-                    myEditor.putString("confirmacionID", mAndroidId); // Se guarda la confirmacion del alert
-                    myEditor.commit();
-                    //TODO: Guardar ID de android (o dirección MAC) en BBDD
-                } else if(texto == mTextoBTError) {
+                if(texto == mTextoBTError) {
                     dialog.dismiss();
                     finish();
                 } else {
-                    mBluetoothAdapter.enable();
+                    Intent enableBT = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBT, REQUEST_BLUETOOTH);
                     dialog.dismiss();
                 }
             }
