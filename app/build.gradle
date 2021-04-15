@@ -44,7 +44,7 @@ dependencies {
     // Libreria Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     // https://mvnrepository.com/artifact/redis.clients/jedis
-    implementation group: 'redis.clients', name: 'jedis', version: '3.5.1'
+    //implementation group: 'redis.clients', name: 'jedis', version: '3.5.1'
     // Servicios Google
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     testImplementation 'junit:junit:4.12'

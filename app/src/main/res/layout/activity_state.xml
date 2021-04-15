@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorFondo">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="#EDE9E9"
+                android:background="@color/colorBotones"
                 android:padding="10dp"
                 android:text="@string/information_title"
                 android:textSize="18sp"
@@ -48,7 +49,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:background="#EDE9E9"
+                android:background="@color/colorCardView"
                 android:padding="10dp"
                 android:text="@string/information_text" />
 
@@ -58,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="#CEDDEC"
+                android:background="@color/colorBotones"
                 android:padding="10dp"
                 android:text="@string/notifications_title"
                 android:textSize="18sp"
@@ -71,7 +72,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:background="#CEDDEC"
+                android:background="@color/colorCardView"
                 android:padding="10dp"
                 android:text="@string/notifications_text" />
 
@@ -86,6 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
+                    android:background="@drawable/rounded_corners"
                     android:onClick="volverMainActivity"
                     android:text="@string/text_back" />
 
@@ -95,6 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
+                    android:background="@drawable/rounded_corners"
                     android:onClick="confirmarCovid"
                     android:text="@string/button_covid" />
             </LinearLayout>

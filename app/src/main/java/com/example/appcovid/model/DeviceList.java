@@ -1,4 +1,4 @@
-package com.example.appcovid.model;
+/*package com.example.appcovid.model;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -47,3 +47,4 @@ public class DeviceList {
     // TODO: Si tiene conexion BT con otro dispositivo durante mas de 15 min, guardar IDs y fecha en la base de datos
     //  (el otro dispositivo tiene que tener la APP también)
 }
+*/

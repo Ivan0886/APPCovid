@@ -6,4 +6,5 @@
     <color name="colorBotones">#FF838ECD</color>
     <color name="colorFondo">#CEDDEC</color>
     <color name="colorBotonesSeleccionado">#FFFFFF</color>
+    <color name="colorCardView">#B0026F93</color>
 </resources>

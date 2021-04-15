@@ -19,28 +19,28 @@ import android.provider.Settings.Secure;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.BluetoothReceiver;
-import com.example.appcovid.model.DeviceList;
+//import com.example.appcovid.model.DeviceList;
 
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-
+/*
     private int mTituloBT, mTextoBT, mTextoBTError;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     //private BluetoothReceiver mBluetoothReceiver;
     public static int REQUEST_BLUETOOTH = 1;
     private DeviceList deviceList;
-    //private static final int mBluetoothRequestCode = 0;
+    //private static final int mBluetoothRequestCode = 0;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+/*
         mTituloBT = R.string.main_dialog_titleBT;
         mTextoBT = R.string.main_dialog_textBT;
         mTextoBTError = R.string.main_dialog_textBTError;
-
+*/
         //mBluetoothReceiver = new BluetoothReceiver();
 
         // Se comprueba si la ID del dispositivo ya se ha guardado
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         // Se comprueba si el Bluetooth está activado o esta soportado por el dispositivo
-        if (mBluetoothAdapter != null) {
+/*        if (mBluetoothAdapter != null) {
             if(!mBluetoothAdapter.isEnabled()) {
                 lanzarAlert(mTituloBT, mTextoBT);
             }
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         deviceList = new DeviceList(mBluetoothAdapter);
         registerReceiver(deviceList.bReciever, filtro);
-
+*/
         //Se informa al usuario que el dispositivo se va a abrir a ser descubierto por otros
         //Si la longitud del extra se pone a 0, el dispositivo siempre se podrá descubrir
         /*Intent discoverableIntent =
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         // de los datos*/
 
     }
-
+/*
     private void lanzarAlert(int titulo, int texto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(titulo));
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.create().show();
     }
-
+*/
 
     public void onClickLanzarActivity(View v) {
         int id = v.getId();
