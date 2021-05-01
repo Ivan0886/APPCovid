@@ -76,8 +76,8 @@ public class RestrictionsViewModel extends ViewModel {
 
                         // TODO Consultar otra API que no limite a 500 la llamada o pagar por ella
                         // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)
-                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
-                        //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                        //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
                         // Se hace la llamada a la API
                         callAsync.enqueue(new Callback<List<RestrictionFeed>>() {

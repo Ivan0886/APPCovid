@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CEDDEC"
+    android:background="@color/colorFondo"
     tools:context=".views.MainActivity">
 
     <TextView
@@ -12,7 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_title"
-        android:textSize="30sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,8 +23,9 @@
         app:layout_constraintVertical_bias="0.111" />
 
     <LinearLayout
-        android:layout_width="327dp"
-        android:layout_height="301dp"
+        android:layout_width="201dp"
+        android:layout_height="397dp"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,11 +39,13 @@
             android:background="@drawable/rounded_corners"
             android:onClick="onClickLanzarActivity"
 
-            android:text="@string/main_news_button_text" />
+            android:padding="20sp"
+            android:text="@string/main_news_button_text"
+            android:textSize="24sp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="80dp" />
+            android:layout_height="40dp" />
 
         <Button
             android:id="@+id/button_restriction"
@@ -49,11 +53,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners"
             android:onClick="onClickLanzarActivity"
-            android:text="@string/main_restriction_button_text" />
+            android:padding="20sp"
+            android:text="@string/main_restriction_button_text"
+            android:textSize="21sp" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="80dp" />
+            android:layout_height="40dp" />
 
         <Button
             android:id="@+id/button_state"
@@ -62,7 +68,9 @@
             android:background="@drawable/rounded_corners"
 
             android:onClick="onClickLanzarActivity"
-            android:text="@string/main_state_button_text" />
+            android:padding="20sp"
+            android:text="@string/main_state_button_text"
+            android:textSize="24sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,6 +69,7 @@ public class RestrictionsActivity extends AppCompatActivity {
         }
 
         mGpsLocation = new GPSLocation(this);
+        // Log.d("HOLAAAAAAAA", String.valueOf(mGpsLocation.getmLatitude()));
 
         if (mGpsLocation.canGetLocation()) {
 

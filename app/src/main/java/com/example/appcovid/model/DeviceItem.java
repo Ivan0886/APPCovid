@@ -1,25 +1,32 @@
 package com.example.appcovid.model;
 
+import org.threeten.bp.LocalDate;
+
 public class DeviceItem {
 
-    private String address;
-    private boolean connected;
+    private String mAddress;
+    private boolean mConnected;
+    private LocalDate mFecha;
 
-    public DeviceItem(String address, String connected){
-        this.address = address;
-        if (connected == "true") {
-            this.connected = true;
-        }
-        else {
-            this.connected = false;
+    public DeviceItem(String mAddress, String mConnected) {
+        // this.mFecha = LocalDate.now();
+        this.mAddress = mAddress;
+        if (mConnected.equals("true")) {
+            this.mConnected = true;
+        } else {
+            this.mConnected = false;
         }
     }
 
-    public boolean getConnected() {
-        return connected;
+    public boolean getmConnected() {
+        return mConnected;
     }
 
-    public String getAddress() {
-        return address;
+    public String getmAddress() {
+        return mAddress;
+    }
+
+    public LocalDate getmFecha() {
+        return mFecha;
     }
 }

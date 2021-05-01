@@ -5,43 +5,42 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.ParcelUuid;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
-import android.provider.Settings.Secure;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.BluetoothReceiver;
 import com.example.appcovid.model.DeviceList;
 
-import java.util.UUID;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private int mTituloBT, mTextoBT, mTextoBTError;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    //private BluetoothReceiver mBluetoothReceiver;
+    private BluetoothReceiver mBluetoothReceiver;
     public static int REQUEST_BLUETOOTH = 1;
-    private DeviceList deviceList;
-    //private static final int mBluetoothRequestCode = 0;
+    private DeviceList mDeviceList;
+    private static final int mBluetoothRequestCode = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mierda();
 
         mTituloBT = R.string.main_dialog_titleBT;
         mTextoBT = R.string.main_dialog_textBT;
         mTextoBTError = R.string.main_dialog_textBTError;
 
-        //mBluetoothReceiver = new BluetoothReceiver();
+        mBluetoothReceiver = new BluetoothReceiver();
 
         // Se comprueba si la ID del dispositivo ya se ha guardado
         /*if (!mPreferences.contains("confirmacionID")) {
@@ -53,26 +52,27 @@ public class MainActivity extends AppCompatActivity {
             if(!mBluetoothAdapter.isEnabled()) {
                 lanzarAlert(mTituloBT, mTextoBT);
             }
+
+            IntentFilter filtro = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+
+            mDeviceList = new DeviceList(mBluetoothAdapter);
+            registerReceiver(mDeviceList.bReciever, filtro);
+
+            mBluetoothAdapter.startDiscovery();
+
+            //Se informa al usuario que el dispositivo se va a abrir a ser descubierto por otros
+            //Si la longitud del extra se pone a 0, el dispositivo siempre se podrá descubrir
+            Intent discoverableIntent =
+                    new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+            startActivity(discoverableIntent);
+
+
+            // Intent que lanza la función onReceive del receiver, donde realizaremos el tratamiento
+            // de los datos*/
         } else {
             lanzarAlert(mTituloBT, mTextoBTError);
         }
-
-        IntentFilter filtro = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-
-        deviceList = new DeviceList(mBluetoothAdapter);
-        registerReceiver(deviceList.bReciever, filtro);
-
-        //Se informa al usuario que el dispositivo se va a abrir a ser descubierto por otros
-        //Si la longitud del extra se pone a 0, el dispositivo siempre se podrá descubrir
-        /*Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-        startActivity(discoverableIntent);*/
-
-
-        // Intent que lanza la función onReceive del receiver, donde realizaremos el tratamiento
-        // de los datos*/
-
     }
 
     private void lanzarAlert(int titulo, int texto) {
@@ -127,4 +127,19 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Comprobar si al cerrar la app del todo se siguen registrando usuarios conectados
         //unregisterReceiver(mBluetoothReceiver);
     }
+
+    public void mierda() {
+        try {
+            List<NetworkInterface> networkInterfaceList = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface networkInterface : networkInterfaceList) {
+                String MAC = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+                Log.d("MIMAC", MAC);
+                Log.d("MAC2", networkInterface.getName());
+            }
+        } catch (
+                SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
