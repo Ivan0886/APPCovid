@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1068655773555",
+    "project_id": "fctdam-45f92",
+    "storage_bucket": "fctdam-45f92.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068655773555:android:09a5a7f57a352490372706",
+        "android_client_info": {
+          "package_name": "com.example.appcovid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068655773555-jp6q7aqg2a9l8fnp1bo1p65vjr49nbch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVckZZvWGvFkxerA-ARcWB1P8IdwimJSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068655773555-jp6q7aqg2a9l8fnp1bo1p65vjr49nbch.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
