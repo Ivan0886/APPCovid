@@ -9,73 +9,108 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.BluetoothReceiver;
 import com.example.appcovid.model.DeviceList;
+import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.messages.Message;
+import com.google.android.gms.nearby.messages.MessageListener;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
 
 public class MainActivity extends AppCompatActivity {
-
-    private int mTituloBT, mTextoBT, mTextoBTError;
-    private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private BluetoothReceiver mBluetoothReceiver;
-    public static int REQUEST_BLUETOOTH = 1;
     private DeviceList mDeviceList;
-    private static final int mBluetoothRequestCode = 0;
 
+    private boolean mConnection;
+    private MessageListener mMessageListener;
+    private Message mMessage;
+    private static final String ANDROID_ID_KEY = "ANDROID_KEY";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mierda();
+        mConnection = false;
 
-        mTituloBT = R.string.main_dialog_titleBT;
-        mTextoBT = R.string.main_dialog_textBT;
-        mTextoBTError = R.string.main_dialog_textBTError;
 
-        mBluetoothReceiver = new BluetoothReceiver();
+        //TODO: Comprobar si el sistema de Nearby funciona entre actividades y si la aplicación está minimizada
 
         // Se comprueba si la ID del dispositivo ya se ha guardado
-        /*if (!mPreferences.contains("confirmacionID")) {
-            lanzarAlert(mTituloID, mTextoID);
-        }*/
+        if (!PreferenceManager.getDefaultSharedPreferences(this).contains(ANDROID_ID_KEY)) {
+            // TODO: Lanzar alert para advertir al usuario que se guardara su ID de Android
+            //  lanzarAlert(mTituloID, mTextoID);
+            String androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(ANDROID_ID_KEY, androidID).apply();
+        }
 
-        // Se comprueba si el Bluetooth está activado o esta soportado por el dispositivo
-        if (mBluetoothAdapter != null) {
-            if(!mBluetoothAdapter.isEnabled()) {
-                lanzarAlert(mTituloBT, mTextoBT);
+
+        mMessageListener = new MessageListener() {
+            @Override
+            public void onFound(Message message) {
+                super.onFound(message);
+                Log.d("onFound", "Encontrado mensaje: " + new String(message.getContent()));
+                mConnection = true;
+                // Contador = 900 : 15 minutos
+                new Thread() {
+                    int contador = 1;
+                    @Override
+                    public void run() {
+                        super.run();
+                        while (contador <= 10 && mConnection ) {
+                            try {
+                                this.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            contador++;
+                        }
+
+                        if (contador >= 10) {
+                            Log.d("Registrado", "ID registrada: " + new String(message.getContent())); // Registrar mensaje (ID) en BBDD
+                        }
+                    }
+                }.run();
             }
 
-            IntentFilter filtro = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            @Override
+            public void onLost(Message message) {
+                super.onLost(message);
+                Log.d("onLost", "Perdido mensaje: " + new String(message.getContent()));
+                if (mConnection) {
+                    mConnection = !mConnection;
+                }
 
-            mDeviceList = new DeviceList(mBluetoothAdapter);
-            registerReceiver(mDeviceList.bReciever, filtro);
+            }
+        };
 
-            mBluetoothAdapter.startDiscovery();
+        mMessage = new Message(PreferenceManager.getDefaultSharedPreferences(this).getString(ANDROID_ID_KEY, "Dispositivo CovidRecord").getBytes());
 
-            //Se informa al usuario que el dispositivo se va a abrir a ser descubierto por otros
-            //Si la longitud del extra se pone a 0, el dispositivo siempre se podrá descubrir
-            Intent discoverableIntent =
-                    new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-            startActivity(discoverableIntent);
-
-
-            // Intent que lanza la función onReceive del receiver, donde realizaremos el tratamiento
-            // de los datos*/
-        } else {
-            lanzarAlert(mTituloBT, mTextoBTError);
-        }
     }
 
-    private void lanzarAlert(int titulo, int texto) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Nearby.getMessagesClient(this).publish(mMessage);
+        Nearby.getMessagesClient(this).subscribe(mMessageListener);
+    }
+    @Override
+    public void onStop() {
+
+        //TODO: Considerar si la aplicación no debería dejar de publicar mensajes si está parada
+        Nearby.getMessagesClient(this).unpublish(mMessage);
+        Nearby.getMessagesClient(this).unsubscribe(mMessageListener);
+        super.onStop();
+    }
+
+  /*  private void lanzarAlert(int titulo, int texto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
@@ -91,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(texto == mTextoBTError) {
+                if(texto == ) {
                     dialog.dismiss();
                     finish();
                 } else {
@@ -103,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.create().show();
     }
-
+*/
 
     public void onClickLanzarActivity(View v) {
         int id = v.getId();
@@ -127,19 +162,4 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Comprobar si al cerrar la app del todo se siguen registrando usuarios conectados
         //unregisterReceiver(mBluetoothReceiver);
     }
-
-    public void mierda() {
-        try {
-            List<NetworkInterface> networkInterfaceList = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface networkInterface : networkInterfaceList) {
-                String MAC = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
-                Log.d("MIMAC", MAC);
-                Log.d("MAC2", networkInterface.getName());
-            }
-        } catch (
-                SocketException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
