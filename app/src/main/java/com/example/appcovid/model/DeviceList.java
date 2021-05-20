@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -56,6 +57,9 @@ public class DeviceList {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Log.d("DEVICELIST", "Bluetooth device found\n");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                /*for(ParcelUuid parcelUuid : device.getUuids()) {
+                    Log.d("PARCEL", parcelUuid.getUuid().toString());
+                }*/
                 // Create a new device item
                 DeviceItem newDevice = new DeviceItem(device.getAddress(), "false");
                 deviceItemList.add(newDevice);

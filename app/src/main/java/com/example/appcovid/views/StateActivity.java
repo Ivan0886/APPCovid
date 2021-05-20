@@ -10,16 +10,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.appcovid.R;
+import com.example.appcovid.model.BaseActivity;
+
 import org.threeten.bp.LocalDate;
 
-public class StateActivity extends AppCompatActivity {
+public class StateActivity extends BaseActivity {
 
     private Button mBoton;
     private SharedPreferences mPreferences;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
 

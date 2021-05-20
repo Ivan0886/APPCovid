@@ -29,4 +29,6 @@ public class DeviceItem {
     public LocalDate getmFecha() {
         return mFecha;
     }
+
+
 }

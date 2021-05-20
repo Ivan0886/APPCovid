@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.BluetoothReceiver;
+import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.DeviceList;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
@@ -27,87 +28,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private DeviceList mDeviceList;
 
-    private boolean mConnection;
-    private MessageListener mMessageListener;
-    private Message mMessage;
-    private static final String ANDROID_ID_KEY = "ANDROID_KEY";
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mConnection = false;
 
-
-        //TODO: Comprobar si el sistema de Nearby funciona entre actividades y si la aplicación está minimizada
-
-        // Se comprueba si la ID del dispositivo ya se ha guardado
-        if (!PreferenceManager.getDefaultSharedPreferences(this).contains(ANDROID_ID_KEY)) {
-            // TODO: Lanzar alert para advertir al usuario que se guardara su ID de Android
-            //  lanzarAlert(mTituloID, mTextoID);
-            String androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(ANDROID_ID_KEY, androidID).apply();
-        }
-
-
-        mMessageListener = new MessageListener() {
-            @Override
-            public void onFound(Message message) {
-                super.onFound(message);
-                Log.d("onFound", "Encontrado mensaje: " + new String(message.getContent()));
-                mConnection = true;
-                // Contador = 900 : 15 minutos
-                new Thread() {
-                    int contador = 1;
-                    @Override
-                    public void run() {
-                        super.run();
-                        while (contador <= 10 && mConnection ) {
-                            try {
-                                this.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            contador++;
-                        }
-
-                        if (contador >= 10) {
-                            Log.d("Registrado", "ID registrada: " + new String(message.getContent())); // Registrar mensaje (ID) en BBDD
-                        }
-                    }
-                }.run();
-            }
-
-            @Override
-            public void onLost(Message message) {
-                super.onLost(message);
-                Log.d("onLost", "Perdido mensaje: " + new String(message.getContent()));
-                if (mConnection) {
-                    mConnection = !mConnection;
-                }
-
-            }
-        };
-
-        mMessage = new Message(PreferenceManager.getDefaultSharedPreferences(this).getString(ANDROID_ID_KEY, "Dispositivo CovidRecord").getBytes());
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Nearby.getMessagesClient(this).publish(mMessage);
-        Nearby.getMessagesClient(this).subscribe(mMessageListener);
-    }
-    @Override
-    public void onStop() {
-
-        //TODO: Considerar si la aplicación no debería dejar de publicar mensajes si está parada
-        Nearby.getMessagesClient(this).unpublish(mMessage);
-        Nearby.getMessagesClient(this).unsubscribe(mMessageListener);
-        super.onStop();
     }
 
   /*  private void lanzarAlert(int titulo, int texto) {

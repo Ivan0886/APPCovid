@@ -22,6 +22,7 @@ import com.example.appcovid.controller.NewsViewModel;
 import com.example.appcovid.controller.RestrictionsAdapter;
 import com.example.appcovid.controller.RestrictionsViewModel;
 import com.example.appcovid.controller.RssAdapter;
+import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.GPSLocation;
 import com.example.appcovid.model.RestrictionsItems;
 import com.example.appcovid.model.RssItem;
@@ -32,7 +33,7 @@ import java.util.List;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class RestrictionsActivity extends AppCompatActivity {
+public class RestrictionsActivity extends BaseActivity {
 
     private ArrayList mPermisosParaSolicitar;
     private ArrayList mPermisosRechazados = new ArrayList();
@@ -45,7 +46,7 @@ public class RestrictionsActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 

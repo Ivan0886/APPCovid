@@ -16,19 +16,20 @@ import android.view.View;
 import com.example.appcovid.R;
 import com.example.appcovid.controller.NewsViewModel;
 import com.example.appcovid.controller.RssAdapter;
+import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.RssItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewsActivity extends AppCompatActivity {
+public class NewsActivity extends BaseActivity {
 
     private RssAdapter mAdapter;
     private NewsViewModel mDatosNews;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
