@@ -24,10 +24,10 @@
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
-        <activity android:name=".views.RestrictionsActivity" />
-        <activity android:name=".views.NewsActivity" />
-        <activity android:name=".views.StateActivity" />
-        <activity android:name=".views.MainActivity">
+        <activity android:name=".views.RestrictionsActivity" android:configChanges="orientation|screenSize" />
+        <activity android:name=".views.NewsActivity" android:configChanges="orientation|screenSize" />
+        <activity android:name=".views.StateActivity" android:configChanges="orientation|screenSize" />
+        <activity android:name=".views.MainActivity" android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

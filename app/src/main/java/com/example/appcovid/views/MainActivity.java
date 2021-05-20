@@ -42,6 +42,7 @@ public class MainActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
+        builder.setCancelable(false);
         builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -64,7 +65,9 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        builder.create().show();
+        Dialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 */
 

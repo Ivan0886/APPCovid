@@ -1,5 +1,6 @@
 package com.example.appcovid.views;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ public class StateActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_state);
         builder.setMessage(R.string.dialog_text_state);
+        builder.setCancelable(false);
 
         builder.setPositiveButton(R.string.text_si, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -76,7 +78,9 @@ public class StateActivity extends BaseActivity {
             }
         });
 
-        builder.create().show();
+        Dialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
 
