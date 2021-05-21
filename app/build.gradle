@@ -60,10 +60,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
     // Libreria Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
-    // Libreria lettuce para Redis
-    //implementation 'io.lettuce:lettuce-core:6.1.0.RELEASE'
-    // https://mvnrepository.com/artifact/redis.clients/jedis
-    implementation group: 'redis.clients', name: 'jedis', version: '3.5.2'
     // Servicios Google
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'

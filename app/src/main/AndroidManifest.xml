@@ -18,10 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyCmjtVQfO7DvZzoZhc6ffYdByAeITZZi1I" />
-
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
         <activity android:name=".views.RestrictionsActivity" android:configChanges="orientation|screenSize" />

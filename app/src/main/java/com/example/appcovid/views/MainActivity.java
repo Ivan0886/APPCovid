@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 
 public class MainActivity extends BaseActivity {
-    private DeviceList mDeviceList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,39 +36,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
     }
-
-  /*  private void lanzarAlert(int titulo, int texto) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(titulo));
-        builder.setMessage(getString(texto));
-        builder.setCancelable(false);
-        builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-
-
-        builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(texto == ) {
-                    dialog.dismiss();
-                    finish();
-                } else {
-                    Intent enableBT = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBT, REQUEST_BLUETOOTH);
-                    dialog.dismiss();
-                }
-            }
-        });
-        Dialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-    }
-*/
 
     public void onClickLanzarActivity(View v) {
         int id = v.getId();
