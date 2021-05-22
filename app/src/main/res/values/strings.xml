@@ -4,7 +4,11 @@
     <string name="text_si">SI</string>
     <string name="text_ok">OK</string>
     <string name="text_back">Atras</string>
+    <string name="text_look_mac">Ver MAC</string>
+    <string name="text_hint_inputMac">Introduce MAC</string>
     <string name="main_dialog_titleBT">Bluetooth</string>
     <string name="main_dialog_textBT">El Bluetooth está desactivado, por favor activelo.</string>
     <string name="main_dialog_textBTError">Este dispositivo no soporta Bluetooth. Se va a proceder a cerrar la aplicación.</string>
+    <string name="main_dialog_titleMAC">Dirección MAC</string>
+    <string name="main_dialog_textMACInfo">Esta aplicación hace uso de la dirección MAC. En el caso de que no sepas cual es... ¿Quieres que te llevemos a la pantalla donde se encuentra?</string>
 </resources>

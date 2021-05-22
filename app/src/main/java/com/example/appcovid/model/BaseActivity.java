@@ -2,13 +2,18 @@ package com.example.appcovid.model;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -23,15 +28,41 @@ public abstract class BaseActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private DeviceList mDeviceList;
     public static int REQUEST_BLUETOOTH = 1;
+    public static String Mac = null;
     public static boolean isAppWentToBg = true;
     public static boolean isWindowFocused = false;
     public static boolean isMenuOpened = false;
     public static boolean isBackPressed = false;
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                Log.d("MAC", deviceHardwareAddress);
+            }
+        }
+    };
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // Visibilidad de nuestro dispositivo
+        Intent discoverableIntent =
+                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        startActivity(discoverableIntent);
+
+        // Detetar dispositivos
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+
     }
 
 
@@ -52,10 +83,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                     lanzarAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBT);
                 } else {
                     if (!PreferenceManager.getDefaultSharedPreferences(this).contains("MAC")) {
-                        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", getMac()).apply();
-                        Log.d("MIMAC", PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??"));
+                        Mac = getMac();
+                        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
                     } else {
-                        Log.d("MIMAC2", PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??"));
+
                     }
                 }
             } else {
@@ -110,8 +141,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void lanzarAlert(int titulo, int texto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        EditText inputMAC = new EditText(this);
+        inputMAC.setHint(R.string.text_hint_inputMac);
+
         builder.setTitle(getString(titulo));
         builder.setMessage(getString(texto));
+        if(texto == R.string.main_dialog_textMACInfo) {
+            builder.setView(inputMAC);
+        }
         builder.setCancelable(false);
 
         builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
@@ -120,6 +158,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if(texto == R.string.main_dialog_textBTError) {
                     dialog.dismiss();
                     finish();
+                } else if(texto == R.string.main_dialog_textMACInfo) {
+                    // TODO Hacer comprobaciones de longitud, etc en el texto introducido
+                    Mac = String.valueOf(inputMAC.getText());
                 } else {
                     Intent enableBT = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBT, REQUEST_BLUETOOTH);
@@ -128,12 +169,19 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
 
-        if(texto != R.string.main_dialog_textBTError) {
+        if(texto == R.string.main_dialog_textBTError) {
             builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     finish();
+                }
+            });
+        } else if(texto == R.string.main_dialog_textMACInfo) {
+            builder.setNegativeButton(R.string.text_look_mac, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS));
                 }
             });
         }
@@ -148,7 +196,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         // TODO Hacerlo para Android > 8
         // mBluetoothAdapter.getAddress();
         // new Intent(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS)
-        return android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+        if(Build.VERSION.SDK_INT <= 23) {
+            Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+        } else {
+            lanzarAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+            //startActivity(new Intent(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS));
+            //MAC = "";
+        }
+        return Mac;
     }
 
 }
