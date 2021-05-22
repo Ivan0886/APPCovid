@@ -36,6 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
+            Log.d("onReceive", "onReceive: Entrando en onReceive");
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Discovery has found a device. Get the BluetoothDevice
@@ -44,6 +45,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("MAC", deviceHardwareAddress);
+                // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
+                // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
+            }else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                mBluetoothAdapter.startDiscovery();
             }
         }
     };
@@ -59,8 +64,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
         startActivity(discoverableIntent);
 
+        Log.d(TAG, "onCreate: En onCreate");
+        mBluetoothAdapter.startDiscovery();
         // Detetar dispositivos
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mReceiver, filter);
 
     }
