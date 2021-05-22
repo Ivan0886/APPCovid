@@ -21,12 +21,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected static final String TAG = BaseActivity.class.getName();
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private DeviceList mDeviceList;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mRef;
     public static int REQUEST_BLUETOOTH = 1;
     public static String Mac = null;
     public static boolean isAppWentToBg = true;
@@ -47,6 +51,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Log.d("MAC", deviceHardwareAddress);
                 // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
                 // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
+
+                //mRef.child("Direcciones").setValue(Mac);
+                mRef.child(Mac).setValue(deviceHardwareAddress);
+                mRef.child(Mac).push().setValue(deviceHardwareAddress);
+
+                //mRef = mDatabase.getReference().child(getMacAddress());
+                // Set valores a la Base de Datos
+                //mRef.setValue(getMacAddress());
+
+
             }else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 mBluetoothAdapter.startDiscovery();
             }
@@ -71,6 +85,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mReceiver, filter);
 
+        mBluetoothAdapter.startDiscovery();
+
+        mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
+        mRef = mDatabase.getReference();
     }
 
 
@@ -94,7 +112,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         Mac = getMac();
                         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
                     } else {
-
+                        Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
                     }
                 }
             } else {
