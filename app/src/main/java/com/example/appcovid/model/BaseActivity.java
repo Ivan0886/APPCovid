@@ -16,13 +16,22 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -53,14 +62,39 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
 
                 //mRef.child("Direcciones").setValue(Mac);
-                mRef.child(Mac).setValue(deviceHardwareAddress);
-                mRef.child(Mac).push().setValue(deviceHardwareAddress);
+                //mRef.child(Mac).setValue(deviceHardwareAddress);
+                // mRef.child(Mac).push().setValue(deviceHardwareAddress);
+
+                //DatabaseReference newRef = mRef.child(Mac).push();
+                mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
+                //TODO: Contar los 15 (para demo 5) minutos antes de insertar
+                //newRef.setValue(deviceHardwareAddress);
+
 
                 //mRef = mDatabase.getReference().child(getMacAddress());
                 // Set valores a la Base de Datos
                 //mRef.setValue(getMacAddress());
 
+                /*mRef.child(Mac).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
+                        List<Object> values = new ArrayList<>(td.values());
 
+                        for(Object value : values) {
+                            Log.d(TAG, "onDataChange: " + value);
+                            Log.d("HardwareAddress", "onDataChange: " + deviceHardwareAddress);
+                            /*if (!value.equals(deviceHardwareAddress)) {
+                                newRef.setValue(deviceHardwareAddress);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });*/
             }else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 mBluetoothAdapter.startDiscovery();
             }
@@ -89,6 +123,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
         mRef = mDatabase.getReference();
+
     }
 
 
@@ -96,6 +131,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "onStart isAppWentToBg " + isAppWentToBg);
         applicationWillEnterForeground();
+
         super.onStart();
     }
 
