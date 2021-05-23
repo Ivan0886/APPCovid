@@ -38,7 +38,6 @@ import java.util.Map;
 public abstract class BaseActivity extends AppCompatActivity {
     protected static final String TAG = BaseActivity.class.getName();
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private DeviceList mDeviceList;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
     public static int REQUEST_BLUETOOTH = 1;
@@ -49,6 +48,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static boolean isBackPressed = false;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public boolean disconnected = false;
+        public long time = 0;
+
         public void onReceive(Context context, Intent intent) {
             Log.d("onReceive", "onReceive: Entrando en onReceive");
             String action = intent.getAction();
@@ -56,8 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                Log.d("MAC", deviceHardwareAddress);
+                Log.d("MAC", device.getAddress());
                 // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
                 // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
 
@@ -68,12 +69,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 //DatabaseReference newRef = mRef.child(Mac).push();
 
                 new CountDownTimer(60000, 1000) {
-                    int cont = 0;
                     public void onTick(long millisUntilFinished) {
-                        Log.d("SEG", cont++ + "");
+                        if(disconnected) {
+                            onFinish();
+                        } else {
+                            time+=1000;
+                        }
                     }
                     public void onFinish() {
-                        mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
+                        if(time == 60000) {
+                            mRef.child(Mac).child(device.getAddress()).setValue(device.getName());
+                        }
                     }
                 }.start();
 
@@ -107,7 +113,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     }
                 });*/
-            }else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                disconnected = true;
                 mBluetoothAdapter.startDiscovery();
             }
         }
