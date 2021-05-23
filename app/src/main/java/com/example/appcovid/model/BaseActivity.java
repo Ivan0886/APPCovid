@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.EditText;
@@ -55,7 +56,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("MAC", deviceHardwareAddress);
                 // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
@@ -66,7 +66,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // mRef.child(Mac).push().setValue(deviceHardwareAddress);
 
                 //DatabaseReference newRef = mRef.child(Mac).push();
-                mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
+
+                new CountDownTimer(60000, 1000) {
+                    int cont = 0;
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("SEG", cont++ + "");
+                    }
+                    public void onFinish() {
+                        mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
+                    }
+                }.start();
+
+
+                //mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
                 //TODO: Contar los 15 (para demo 5) minutos antes de insertar
                 //newRef.setValue(deviceHardwareAddress);
 
