@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
+import com.example.appcovid.controller.BluetoothCountdown;
 import com.example.appcovid.views.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,10 +30,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.PreferenceChangeEvent;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -48,73 +51,74 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static boolean isBackPressed = false;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public boolean disconnected = false;
-        public long time = 0;
+        private ArrayList<String> macListOld = new ArrayList<>();
+        private ArrayList<String> macListNew = null;
+        private ArrayList<BluetoothCountdown> timerList = new ArrayList<>();
 
         public void onReceive(Context context, Intent intent) {
-            Log.d("onReceive", "onReceive: Entrando en onReceive");
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d("MAC", device.getAddress());
-                // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
+                //TODO: Comprobar que la MAC recibida esté registrada en la BBDD
+                BluetoothCountdown count = new BluetoothCountdown(device.getAddress(), Mac, mRef, 60000, 1000, device.getName());
+                // TODO: Buscar una mejor forma de descubrir dispositivos
                 // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
 
-                //mRef.child("Direcciones").setValue(Mac);
-                //mRef.child(Mac).setValue(deviceHardwareAddress);
-                // mRef.child(Mac).push().setValue(deviceHardwareAddress);
-
-                //DatabaseReference newRef = mRef.child(Mac).push();
-
-                new CountDownTimer(60000, 1000) {
-                    public void onTick(long millisUntilFinished) {
-                        if(disconnected) {
-                            onFinish();
-                        } else {
-                            time+=1000;
-                        }
+                //comprobamos que es el primer escaneo
+                if (macListNew == null) {
+                    macListOld.add(device.getAddress());
+                    count.start();
+                    timerList.add(count);
+                } else {
+                    macListNew.add(device.getAddress());
+                    if (!timerList.contains(count)) {
+                        count.start();
+                        timerList.add(count);
                     }
-                    public void onFinish() {
-                        if(time == 60000) {
-                            mRef.child(Mac).child(device.getAddress()).setValue(device.getName());
-                        }
+                }
+
+                for (String macOld :
+                        macListOld) {
+                    Log.d("MACOLD", "OLD: " + macOld);
+                }
+                if (macListNew != null) {
+                    for (String macNew :
+                            macListNew) {
+                        Log.d("MACNEW", "NEW: " + macNew);
                     }
-                }.start();
+                }
+                synchronized (this) {
+                    for (BluetoothCountdown countLoop :
+                            timerList) {
+                        Log.d("TIMERS", "Timers: " + countLoop.getmDeviceName());
+                    }
+                }
 
 
-                //mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
                 //TODO: Contar los 15 (para demo 5) minutos antes de insertar
-                //newRef.setValue(deviceHardwareAddress);
 
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                if (macListNew == null) {
+                    macListNew = new ArrayList<>();
+                } else {
+                    ArrayList<String> newMacList = new ArrayList<>();
+                    for (String macCheck : macListNew) {
+                        if (!macListOld.contains(macCheck)) {
+                            newMacList.add(macCheck);
+                        }
+                    }
+                    synchronized (this) {
+                        for (BluetoothCountdown count : timerList) {
+                            if (newMacList.contains(count.getmDeviceMac())) {
+                                count.cancelCounting();
 
-                //mRef = mDatabase.getReference().child(getMacAddress());
-                // Set valores a la Base de Datos
-                //mRef.setValue(getMacAddress());
-
-                /*mRef.child(Mac).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
-                        List<Object> values = new ArrayList<>(td.values());
-
-                        for(Object value : values) {
-                            Log.d(TAG, "onDataChange: " + value);
-                            Log.d("HardwareAddress", "onDataChange: " + deviceHardwareAddress);
-                            /*if (!value.equals(deviceHardwareAddress)) {
-                                newRef.setValue(deviceHardwareAddress);
+                                timerList.remove(count);
                             }
                         }
                     }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                disconnected = true;
+                    macListOld = new ArrayList<>(macListNew);
+                    macListNew = new ArrayList<>();
+                }
                 mBluetoothAdapter.startDiscovery();
             }
         }
@@ -151,6 +155,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.d(TAG, "onStart isAppWentToBg " + isAppWentToBg);
         applicationWillEnterForeground();
 
+        mRef.child(Mac);
         super.onStart();
     }
 
