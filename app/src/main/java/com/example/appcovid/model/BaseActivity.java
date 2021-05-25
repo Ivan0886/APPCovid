@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +40,10 @@ import java.util.Map;
 public abstract class BaseActivity extends AppCompatActivity {
     protected static final String TAG = BaseActivity.class.getName();
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    //IntentFilter scanIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
+    private ArrayList<String> list = new ArrayList<>();
     public static int REQUEST_BLUETOOTH = 1;
     public static String Mac = null;
     public static boolean isAppWentToBg = true;
@@ -48,17 +52,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static boolean isBackPressed = false;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public boolean disconnected = false;
-        public long time = 0;
-
         public void onReceive(Context context, Intent intent) {
             Log.d("onReceive", "onReceive: Entrando en onReceive");
             String action = intent.getAction();
+            CountDownTimer count = null;
+
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d("MAC", device.getAddress());
                 // TODO: Buscar una mejor forma de descubrir dispositivos constantemente
                 // TODO: Evitar que nos salga el alert de confirmación en todas las actividades
 
@@ -68,20 +70,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 //DatabaseReference newRef = mRef.child(Mac).push();
 
-                new CountDownTimer(60000, 1000) {
+                count = new CountDownTimer(60000, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        if(disconnected) {
-                            onFinish();
-                        } else {
-                            time+=1000;
-                        }
+                        Log.d("MAC", device.getAddress());
                     }
                     public void onFinish() {
-                        if(time == 60000) {
+                        if(list.contains(device.getAddress())) {
                             mRef.child(Mac).child(device.getAddress()).setValue(device.getName());
+                        } else {
+                            list.add(device.getAddress());
                         }
+                        cancel();
                     }
-                }.start();
+                };
+
+                count.start();
 
 
                 //mRef.child(Mac).child(deviceHardwareAddress).setValue("holaaaaaaaa");
@@ -114,8 +117,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 });*/
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                disconnected = true;
+                if(count != null) {
+                    count.onFinish();
+                }
                 mBluetoothAdapter.startDiscovery();
+                Log.d("Acción acabada", "FIIIIIIIIIIIIIIIN");
             }
         }
     };
@@ -125,6 +131,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
+        mRef = mDatabase.getReference();
+
         // Visibilidad de nuestro dispositivo
         Intent discoverableIntent =
                 new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -132,16 +141,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(discoverableIntent);
 
         Log.d(TAG, "onCreate: En onCreate");
-        mBluetoothAdapter.startDiscovery();
+        //mBluetoothAdapter.startDiscovery();
         // Detetar dispositivos
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        //registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
         registerReceiver(mReceiver, filter);
+        //registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+
 
         mBluetoothAdapter.startDiscovery();
-
-        mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
-        mRef = mDatabase.getReference();
 
     }
 
