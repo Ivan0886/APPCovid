@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,26 +78,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 }
 
-                for (String macOld :
-                        macListOld) {
-                    Log.d("MACOLD", "OLD: " + macOld);
-                }
-                if (macListNew != null) {
-                    for (String macNew :
-                            macListNew) {
-                        Log.d("MACNEW", "NEW: " + macNew);
-                    }
-                }
-                synchronized (this) {
-                    for (BluetoothCountdown countLoop :
-                            timerList) {
-                        Log.d("TIMERS", "Timers: " + countLoop.getmDeviceName());
-                    }
-                }
-
-
-                //TODO: Contar los 15 (para demo 5) minutos antes de insertar
-
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (macListNew == null) {
                     macListNew = new ArrayList<>();
@@ -107,16 +88,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                             newMacList.add(macCheck);
                         }
                     }
-                    synchronized (this) {
-                        for (BluetoothCountdown count : timerList) {
-                            if (newMacList.contains(count.getmDeviceMac())) {
-                                count.cancelCounting();
+                    for (BluetoothCountdown count : timerList) {
+                        if (newMacList.contains(count.getmDeviceMac())) {
+                            count.cancelCounting();
 
-                                timerList.remove(count);
-                            }
+                            timerList.remove(count);
                         }
                     }
-                    macListOld = new ArrayList<>(macListNew);
+
+
+                    macListOld = new ArrayList<>();
+                    Collections.copy(macListOld, macListNew);
                     macListNew = new ArrayList<>();
                 }
                 mBluetoothAdapter.startDiscovery();

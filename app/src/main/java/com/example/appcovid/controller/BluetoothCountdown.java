@@ -30,12 +30,16 @@ public class BluetoothCountdown extends CountDownTimer {
 
     @Override
     public void onFinish() {
+        Log.d(TAG, "onFinish: Se acabo " + this.mDeviceName);
         mRef.child(mOwnMac).child(mDeviceMac).setValue(mDeviceName);
+        this.cancelCounting();
     }
         
     public void cancelCounting() {
         if (mCounting) {
+            Log.d("CANCEL", "Cancelando: " + this.getmDeviceName() + " " + this.getmDeviceMac());
             this.cancel();
+
         }else {
             Log.d("CANCELLED", "cancelCounting: Ya esta cancelado wey");
         }
