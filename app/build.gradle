@@ -48,7 +48,7 @@ dependencies {
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging'
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     implementation fileTree(dir: "libs", include: ["*.jar"])
