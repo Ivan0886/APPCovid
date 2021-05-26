@@ -90,8 +90,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:background="@drawable/rounded_corners"
-                    android:onClick="confirmarCovid"
+                    android:background="@drawable/button_main"
+                    android:onClick="confirmCovid"
                     android:text="@string/button_covid" />
             </LinearLayout>
 

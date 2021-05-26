@@ -18,21 +18,21 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class NewsViewModel extends ViewModel {
 
-    private MutableLiveData<List<RssItem>> mDatos;
+    private MutableLiveData<List<RssItem>> mData;
     private static final String URL_RSS = "https://www.rtve.es/";
 
 
-    public LiveData<List<RssItem>> getmDatos() {
-        if(mDatos == null) {
-            mDatos = new MutableLiveData<List<RssItem>>();
-            mDatos.setValue(new ArrayList<RssItem>());
-            loadDatos();
+    public LiveData<List<RssItem>> getmData() {
+        if(mData == null) {
+            mData = new MutableLiveData<List<RssItem>>();
+            mData.setValue(new ArrayList<RssItem>());
+            loadData();
         }
 
-        return mDatos;
+        return mData;
     }
 
-    private void loadDatos() {
+    private void loadData() {
         // Se construye el retrofit
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -50,15 +50,15 @@ public class NewsViewModel extends ViewModel {
             public void onResponse(Call<RssFeed> call, Response<RssFeed> response) {
                 if (response.isSuccessful()) {
                     // La API responde correctamente
-                    mDatos.postValue(response.body().getmChannel().getItems());
+                    mData.postValue(response.body().getmChannel().getItems());
                 } else {
-                    mDatos.postValue(null);
+                    mData.postValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<RssFeed> call, Throwable t) {
-                mDatos.postValue(null);
+                mData.postValue(null);
             }
         });
     }

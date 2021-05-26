@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- XML que hace referencia a estados de error -->
-<resources>
-    <string name="error_title">Error</string>
-    <string name="error_text">Error conectandose</string>
-    <string name="error_text_service">El servicio no está disponible</string>
-    <string name="error_text_active_gps">¿Quieres activar el GPS?</string>
-</resources>

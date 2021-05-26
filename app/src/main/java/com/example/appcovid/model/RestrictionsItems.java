@@ -5,18 +5,18 @@ import com.google.gson.annotations.SerializedName;
 public class RestrictionsItems {
 
     @SerializedName(value="title")
-    private String mTitulo;
+    private String mTitle;
 
     @SerializedName(value="description")
-    private String mDescripcion;
+    private String mDescription;
 
 
-    public String getmTitulo() {
-        return mTitulo;
+    public String getmTitle() {
+        return mTitle;
     }
 
 
-    public String getmDescripcion() {
-        return mDescripcion;
+    public String getmDescription() {
+        return mDescription;
     }
 }

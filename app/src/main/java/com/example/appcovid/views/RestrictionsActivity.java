@@ -1,6 +1,5 @@
 package com.example.appcovid.views;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,23 +8,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.appcovid.R;
-import com.example.appcovid.controller.NewsViewModel;
 import com.example.appcovid.controller.RestrictionsAdapter;
 import com.example.appcovid.controller.RestrictionsViewModel;
-import com.example.appcovid.controller.RssAdapter;
 import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.GPSLocation;
 import com.example.appcovid.model.RestrictionsItems;
-import com.example.appcovid.model.RssItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +28,10 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class RestrictionsActivity extends BaseActivity {
 
-    private ArrayList mPermisosParaSolicitar;
-    private ArrayList mPermisosRechazados = new ArrayList();
-    private ArrayList mPermisos = new ArrayList();
-    private RestrictionsViewModel mDatosRestrictions;
+    private ArrayList mPermissionsToRequest;
+    private ArrayList mPermissionsRejected = new ArrayList();
+    private ArrayList mPermissions = new ArrayList();
+    private RestrictionsViewModel mDataRestrictions;
     private RestrictionsAdapter mAdapter;
 
     private final static int ALL_PERMISSIONS_RESULT = 101;
@@ -50,10 +43,10 @@ public class RestrictionsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
-        mPermisos.add(ACCESS_FINE_LOCATION);
-        mPermisos.add(ACCESS_COARSE_LOCATION);
+        mPermissions.add(ACCESS_FINE_LOCATION);
+        mPermissions.add(ACCESS_COARSE_LOCATION);
 
-        mPermisosParaSolicitar = encontrarRespuestaPermisos(mPermisos);
+        mPermissionsToRequest = findAnswerPermissions(mPermissions);
 
         // Se construye el RecyclerView
         RecyclerView recyclerView = findViewById(R.id.list_restrictions);
@@ -64,8 +57,8 @@ public class RestrictionsActivity extends BaseActivity {
         recyclerView.setAdapter(mAdapter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (mPermisosParaSolicitar.size() > 0) {
-                requestPermissions((String[]) mPermisosParaSolicitar.toArray(new String[mPermisosParaSolicitar.size()]), ALL_PERMISSIONS_RESULT);
+            if (mPermissionsToRequest.size() > 0) {
+                requestPermissions((String[]) mPermissionsToRequest.toArray(new String[mPermissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             }
         }
 
@@ -75,30 +68,30 @@ public class RestrictionsActivity extends BaseActivity {
         if (mGpsLocation.canGetLocation()) {
 
             // Se construye el ViewModel
-            mDatosRestrictions = new ViewModelProvider(this).get(RestrictionsViewModel.class);
+            mDataRestrictions = new ViewModelProvider(this).get(RestrictionsViewModel.class);
 
             // Se comprueba si los datos han cambiado
-            mDatosRestrictions.getmDatos(mGpsLocation).observe(this, new Observer<List<RestrictionsItems>>() {
+            mDataRestrictions.getmData(mGpsLocation).observe(this, new Observer<List<RestrictionsItems>>() {
                 @Override
                 public void onChanged(List<RestrictionsItems> restrictionsItems) {
                     // Si la llamada ha ido bien
                     if(restrictionsItems != null) {
                         mAdapter.addData(new ArrayList(restrictionsItems));
                     } else {
-                        lanzarError("Ha surgido un problema llamando a la API");
+                        launchError("Ha surgido un problema llamando a la API");
                     }
                 }
             });
         } else {
-            mGpsLocation.lanzarAlertConfiguracion();
+            mGpsLocation.launchAlertConfig();
         }
     }
 
 
-    private void lanzarError(String mensajeError) {
+    private void launchError(String messageError) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.error_title));
-        builder.setMessage(mensajeError);
+        builder.setMessage(messageError);
         builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -110,11 +103,11 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    private ArrayList encontrarRespuestaPermisos(ArrayList wanted) {
+    private ArrayList findAnswerPermissions(ArrayList wanted) {
         ArrayList result = new ArrayList();
 
         for (Object permiso : wanted) {
-            if (!tienePermiso((String)permiso)) {
+            if (!youHavePermision((String)permiso)) {
                 result.add(permiso);
             }
         }
@@ -122,7 +115,7 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    private boolean tienePermiso(String permission) {
+    private boolean youHavePermision(String permission) {
         if (canMakeSmores()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
@@ -141,15 +134,15 @@ public class RestrictionsActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permisos, int[] grantResults) {
         if(requestCode == ALL_PERMISSIONS_RESULT)
-            for (Object permiso : mPermisosParaSolicitar) {
-                if (!tienePermiso((String)permiso)) {
-                    mPermisosRechazados.add(permiso);
+            for (Object permission : mPermissionsToRequest) {
+                if (!youHavePermision((String)permission)) {
+                    mPermissionsRejected.add(permission);
                 }
             }
 
-        if (mPermisosRechazados.size() > 0) {
+        if (mPermissionsRejected.size() > 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale((String) mPermisosRechazados.get(0))) {
+                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0))) {
                     finish();
                 }
             }
@@ -164,7 +157,7 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    public void OnClickVolver(View v) {
+    public void OnClickBack(View v) {
        finish();
     }
 }

@@ -53,8 +53,8 @@ public class RestrictionsAdapter extends RecyclerView.Adapter<com.example.appcov
         // Une los datos TextView e ImageView en cada fila
         @Override
         public void onBindViewHolder(com.example.appcovid.controller.RestrictionsAdapter.ViewHolder holder, int position) {
-            holder.textView.setText(mData.get(position).getmTitulo());
-            holder.textView2.setText(mData.get(position).getmDescripcion());
+            holder.textView.setText(mData.get(position).getmTitle());
+            holder.textView2.setText(mData.get(position).getmDescription());
         }
 
 

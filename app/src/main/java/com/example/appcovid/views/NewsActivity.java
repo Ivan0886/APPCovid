@@ -1,6 +1,5 @@
 package com.example.appcovid.views;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,7 +24,7 @@ import java.util.List;
 public class NewsActivity extends BaseActivity {
 
     private RssAdapter mAdapter;
-    private NewsViewModel mDatosNews;
+    private NewsViewModel mDataNews;
 
 
     @Override
@@ -42,10 +41,10 @@ public class NewsActivity extends BaseActivity {
         recyclerView.setAdapter(mAdapter);
 
         // Se construye el ViewModel
-        mDatosNews = new ViewModelProvider(this).get(NewsViewModel.class);
+        mDataNews = new ViewModelProvider(this).get(NewsViewModel.class);
 
         // Se comprueba si los datos han cambiado
-        mDatosNews.getmDatos().observe(this, new Observer<List<RssItem>>() {
+        mDataNews.getmData().observe(this, new Observer<List<RssItem>>() {
             @Override
             public void onChanged(List<RssItem> rssItems) {
                 // Si la llamada ha ido bien
@@ -56,24 +55,28 @@ public class NewsActivity extends BaseActivity {
                     mAdapter.setClickListener(new RssAdapter.ItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-                            Intent i = new Intent();
-                            i.setAction(Intent.ACTION_VIEW);
+                            Intent i = new Intent(NewsActivity.this, WebNewsActivity.class);
                             i.setData(Uri.parse(mAdapter.getItem(position).getmLink()));
                             startActivity(i);
+
+                            /*Intent i = new Intent();
+                            i.setAction(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(mAdapter.getItem(position).getmLink()));
+                            startActivity(i);*/
                         }
                     });
                 } else {
-                    lanzarError("Ha surgido un problema llamando a la API");
+                    launchError("Ha surgido un problema llamando a la API");
                 }
             }
         });
     }
 
 
-    private void lanzarError(String mensajeError) {
+    private void launchError(String messageError) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.error_title));
-        builder.setMessage(mensajeError);
+        builder.setMessage(messageError);
         builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -85,7 +88,7 @@ public class NewsActivity extends BaseActivity {
     }
 
 
-    public void volverMainActivity(View v) {
+    public void backMainActivity(View v) {
         finish();
     }
 }

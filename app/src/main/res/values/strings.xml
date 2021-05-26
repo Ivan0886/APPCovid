@@ -1,14 +1,121 @@
 <resources>
     <string name="app_name">APPCovid</string>
-    <string name="text_no">NO</string>
-    <string name="text_si">SI</string>
-    <string name="text_ok">OK</string>
-    <string name="text_back">Atras</string>
-    <string name="text_look_mac">Ver MAC</string>
-    <string name="text_hint_inputMac">Introduce MAC</string>
+    <string name="button_covid">Tengo COVID-19</string>
+    <string name="button_new">Leer noticia</string>
+    <string name="dialog_text_state">Si confirmas que tienes COVID-19, se bloqueara el boton durante 14 dias</string>
+    <string name="dialog_title_state">¿Tienes COVID-19?</string>
+    <!-- Referencia a estados de error -->
+    <string name="error_text">Error conectandose</string>
+    <string name="error_text_active_gps">¿Quieres activar el GPS?</string>
+    <string name="error_text_service">El servicio no está disponible</string>
+    <string name="error_title">Error</string>
+    <string name="information_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br/>
+        \nDonec nec mollis ex, et elementum quam.<br/>
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.<br/>
+        \nNullam ac ornare libero, sed porta eros.<br/>
+        \nNulla molestie nibh non odio mattis suscipit.<br/>
+        \nCurabitur vel lacus massa.<br/>
+        \nDuis sollicitudin efficitur est ac feugiat.<br/>
+        \nSuspendisse lobortis ex in elementum venenatis.<br/>
+        \nAliquam vehicula sem in accumsan interdum.<br/>
+        \nInteger a erat eu nibh luctus elementum.<br/>
+        \nProin vel eleifend elit, in blandit mi.<br/>
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.<br/>
+        \nNullam nec libero nisl.<br/>
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.<br/>
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="information_title">Información</string>
+    <!-- Referencia a activity_state.xml y StateActivity.java -->
+    <string name="new1_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="new2_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="new3_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        \nDonec nec mollis ex, et elementum quam.
+        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.
+        \nNullam ac ornare libero, sed porta eros.
+        \nNulla molestie nibh non odio mattis suscipit.
+        \nCurabitur vel lacus massa.
+        \nDuis sollicitudin efficitur est ac feugiat.
+        \nSuspendisse lobortis ex in elementum venenatis.
+        \nAliquam vehicula sem in accumsan interdum.
+        \nInteger a erat eu nibh luctus elementum.
+        \nProin vel eleifend elit, in blandit mi.
+        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.
+        \nNullam nec libero nisl.
+        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.
+        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+    </string>
+    <string name="news_title">Noticias</string>
+    <string name="new1_title">Noticia 1</string>
+    <string name="new2_title">Noticia 2</string>
+    <string name="new3_title">Noticia 3</string>
+    <string name="notifications_text">
+        * Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br/>
+        \n* Donec nec mollis ex, et elementum quam.<br/>
+        \n* Morbi eget libero vel quam vestibulum facilisis quis eu purus.<br/>
+        \n* Nullam ac ornare libero, sed porta eros.
+    </string>
+    <string name="notifications_title">Notificaciones</string>
+    <string name="main_dialog_title">Identificador único</string>
     <string name="main_dialog_titleBT">Bluetooth</string>
+    <string name="main_dialog_text">Al usar esta aplicacíon, no se accederán a tus datos personales. En su lugar se usará la ID del dispositivo.</string>
     <string name="main_dialog_textBT">El Bluetooth está desactivado, por favor activelo.</string>
     <string name="main_dialog_textBTError">Este dispositivo no soporta Bluetooth. Se va a proceder a cerrar la aplicación.</string>
     <string name="main_dialog_titleMAC">Dirección MAC</string>
     <string name="main_dialog_textMACInfo">Esta aplicación hace uso de la dirección MAC. En el caso de que no sepas cual es... ¿Quieres que te llevemos a la pantalla donde se encuentra?</string>
+    <string name="main_news_button_text">Noticias</string>
+    <string name="main_restriction_button_text">Restricciones</string>
+    <string name="main_state_button_text">Estado</string>
+    <string name="main_title">CovidRecord</string>
+    <!-- Referencia a activity_restrictions.xml y RestrictionActivity.java -->
+    <string name="restriction_title">Restricciones</string>
+    <string name="restriction_placeholder">
+        * Medida 1<br/>
+        \n* Medida 2<br/>
+        \n* Medida 3<br/>
+        \n* Medida 4<br/>
+        \n* Medida 5<br/>
+    </string>
+    <string name="state_title">Estado</string>
+    <string name="text_no">NO</string>
+    <string name="text_si">SI</string>
+    <string name="text_ok">OK</string>
+    <string name="text_back">Atras</string>
+    <string name="text_hint_inputMac">Introduce MAC</string>
+    <string name="text_look_mac">Ver MAC</string>
+    <string name="toast_text_state">Gracias por ayudarnos a vencer al COVID. Por favor, sigue las intrucciones sanitarias correspondientes.</string>
 </resources>

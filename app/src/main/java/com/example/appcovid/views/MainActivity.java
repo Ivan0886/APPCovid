@@ -1,32 +1,11 @@
 package com.example.appcovid.views;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 
 import com.example.appcovid.R;
-import com.example.appcovid.controller.BluetoothReceiver;
 import com.example.appcovid.model.BaseActivity;
-import com.example.appcovid.model.DeviceList;
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.messages.Message;
-import com.google.android.gms.nearby.messages.MessageListener;
-
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Collections;
-import java.util.List;
-import java.util.prefs.PreferenceChangeEvent;
 
 public class MainActivity extends BaseActivity {
 

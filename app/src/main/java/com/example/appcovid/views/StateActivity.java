@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.appcovid.R;
 import com.example.appcovid.model.BaseActivity;
 
@@ -17,7 +17,7 @@ import org.threeten.bp.LocalDate;
 
 public class StateActivity extends BaseActivity {
 
-    private Button mBoton;
+    private Button mButton;
     private SharedPreferences mPreferences;
 
 
@@ -27,32 +27,32 @@ public class StateActivity extends BaseActivity {
         setContentView(R.layout.activity_state);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
-        mBoton = (Button) findViewById(R.id.button_covid);
-        mBoton.setEnabled(comprobarTiempoConfirmacionCovid()); // Se comprueba si han pasado 14 dias
+        mButton = (Button) findViewById(R.id.button_covid);
+        mButton.setEnabled(checkTimeConfirmationCovid()); // Se comprueba si han pasado 14 dias
 
         // TODO ¿Crear un fragmento en las notificaciones?
     }
 
 
-    private boolean comprobarTiempoConfirmacionCovid() {
-        String fecha = mPreferences.getString("fechaCovid", "unknown");
-        boolean valor = true;
+    private boolean checkTimeConfirmationCovid() {
+        String date = mPreferences.getString("fechaCovid", "unknown");
+        boolean value = true;
 
-        if (!fecha.equalsIgnoreCase("unknown")) {
-            valor = LocalDate.now().isAfter(LocalDate.parse(fecha).plusDays(14));
+        if (!date.equalsIgnoreCase("unknown")) {
+            value = LocalDate.now().isAfter(LocalDate.parse(date).plusDays(14));
         }
 
-        return valor;
+        return value;
     }
 
 
-    public void volverMainActivity(View v) {
+    public void backMainActivity(View v) {
        // startActivity(new Intent(StateActivity.this, MainActivity.class));
         finish();
     }
 
 
-    public void confirmarCovid(View v) {
+    public void confirmCovid(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_state);
         builder.setMessage(R.string.dialog_text_state);
@@ -65,10 +65,10 @@ public class StateActivity extends BaseActivity {
                 myEditor.putString("fechaCovid", LocalDate.now().toString()); // Se guarda la fecha que el usuario confirma que tiene el COVID
                 myEditor.commit();
 
-                mBoton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
+                mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
                 dialog.dismiss();
 
-                mostrarToast(R.string.toast_text_state);
+                showToast(R.string.toast_text_state);
             }
         });
 
@@ -84,7 +84,7 @@ public class StateActivity extends BaseActivity {
     }
 
 
-    private void mostrarToast(int mensaje) {
+    private void showToast(int mensaje) {
         Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
     }
 }

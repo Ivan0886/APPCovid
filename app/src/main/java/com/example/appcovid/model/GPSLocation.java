@@ -13,23 +13,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
 import com.example.appcovid.R;
-import com.example.appcovid.controller.GPSService;
-import com.example.appcovid.controller.RestrictionsService;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GPSLocation extends Service implements LocationListener {
 
@@ -40,10 +30,10 @@ public class GPSLocation extends Service implements LocationListener {
 
     private final Context mContext;
 
-    private boolean mComprobarGPS = false;
-    private boolean mPuedoObtenerLocalizacion = false;
+    private boolean mCheckGPS = false;
+    private boolean mCanGetLocation = false;
 
-    private Location mLocalizacion;
+    private Location mLocation;
 
     private double mLatitude;
     private double mLongitude;
@@ -54,24 +44,24 @@ public class GPSLocation extends Service implements LocationListener {
 
     public GPSLocation(Context mContext) {
         this.mContext = mContext;
-        this.mLocalizacion = getLocation();
+        this.mLocation = getmLocation();
     }
 
 
-    private Location getLocation() {
+    private Location getmLocation() {
         try {
             locationManager = (LocationManager)mContext.getSystemService(LOCATION_SERVICE);
 
             // Obtiene el estado GPS
-            mComprobarGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            mCheckGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-            if (!mComprobarGPS) {
+            if (!mCheckGPS) {
                 Toast.makeText(mContext, R.string.error_text_service, Toast.LENGTH_SHORT).show();
             } else {
-                this.mPuedoObtenerLocalizacion = true;
+                this.mCanGetLocation = true;
 
                 // Si el GPS está habilitado, obtiene latitude y longitud
-                if (mComprobarGPS) {
+                if (mCheckGPS) {
                     if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                             && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     }
@@ -82,7 +72,7 @@ public class GPSLocation extends Service implements LocationListener {
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
                     if (locationManager != null) {
-                        mLocalizacion = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                         /*if (mLocalizacion != null) {
 
@@ -156,37 +146,37 @@ public class GPSLocation extends Service implements LocationListener {
         }
 
         //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
-        return mLocalizacion;
+        return mLocation;
     }
 
 
-    public List<RestrictionsItems> getmRestriciones() {
+    public List<RestrictionsItems> getmRestrictions() {
         return mRestriciones;
     }
 
 
     public double getmLongitude() {
-        if (mLocalizacion != null) {
-            mLongitude = mLocalizacion.getLongitude();
+        if (mLocation != null) {
+            mLongitude = mLocation.getLongitude();
         }
         return mLongitude;
     }
 
 
     public double getmLatitude() {
-        if (mLocalizacion != null) {
-            mLatitude = mLocalizacion.getLatitude();
+        if (mLocation != null) {
+            mLatitude = mLocation.getLatitude();
         }
         return mLatitude;
     }
 
 
     public boolean canGetLocation() {
-        return this.mPuedoObtenerLocalizacion;
+        return this.mCanGetLocation;
     }
 
 
-    public void lanzarAlertConfiguracion() {
+    public void launchAlertConfig() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setTitle(R.string.error_title);
         alertDialog.setMessage(R.string.error_text_active_gps);
