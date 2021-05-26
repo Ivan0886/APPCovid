@@ -38,7 +38,7 @@
                 android:background="#EDE9E9"
                 android:padding="10dp"
                 android:text="@string/information_title"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/primaryDark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                 android:background="#CEDDEC"
                 android:padding="10dp"
                 android:text="@string/notifications_title"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/primaryDark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:background="@drawable/button_main"
+                    android:background="@drawable/ic_button_main"
                     android:onClick="confirmCovid"
                     android:text="@string/button_covid" />
             </LinearLayout>

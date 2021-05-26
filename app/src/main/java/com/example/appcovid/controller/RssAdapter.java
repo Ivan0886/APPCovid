@@ -66,7 +66,7 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.ViewHolder> {
                         getmUrl()).
                 fit().
                 centerCrop().
-                error(R.drawable.img_prueba).
+                error(R.drawable.ic_img_test).
                 into(holder.image);
     }
 

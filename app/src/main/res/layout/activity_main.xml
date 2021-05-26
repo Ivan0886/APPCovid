@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_color_main"
+    android:background="@drawable/ic_background_color"
     tools:context=".views.MainActivity">
 
     <ImageView
@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_main_title" />
+        app:srcCompat="@drawable/ic_title_app" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -33,12 +33,12 @@
             android:id="@+id/button_news"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_main"
+            android:background="@drawable/ic_button_main"
             android:onClick="onClickLanzarActivity"
 
             android:padding="20sp"
             android:text="@string/main_news_button_text"
-            android:textColor="@color/colorNegro"
+            android:textColor="@color/black"
             android:textSize="24sp" />
 
         <Space
@@ -49,11 +49,11 @@
             android:id="@+id/button_restriction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_main"
+            android:background="@drawable/ic_button_main"
             android:onClick="onClickLanzarActivity"
             android:padding="20sp"
             android:text="@string/main_restriction_button_text"
-            android:textColor="@color/colorNegro"
+            android:textColor="@color/black"
             android:textSize="21sp" />
 
         <Space
@@ -64,12 +64,12 @@
             android:id="@+id/button_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_main"
+            android:background="@drawable/ic_button_main"
 
             android:onClick="onClickLanzarActivity"
             android:padding="20sp"
             android:text="@string/main_state_button_text"
-            android:textColor="@color/colorNegro"
+            android:textColor="@color/black"
             android:textSize="24sp" />
     </LinearLayout>
 
