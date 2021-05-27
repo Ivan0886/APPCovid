@@ -118,4 +118,8 @@
     <string name="text_hint_inputMac">Introduce MAC</string>
     <string name="text_look_mac">Ver MAC</string>
     <string name="toast_text_state">Gracias por ayudarnos a vencer al COVID. Por favor, sigue las intrucciones sanitarias correspondientes.</string>
+
+    <!-- Notificaciones -->
+    <string name="text_notification_title">Un contacto tiene COVID-19</string>
+    <string name="text_notification_body"> Has estado en contacto con un positivo de COVID-19. Intenta hacerte el PCR en la mayor brevedad posible.</string>
 </resources>

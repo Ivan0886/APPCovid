@@ -17,13 +17,19 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -59,17 +65,28 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 //DatabaseReference newRef = mRef.child(Mac).push();
 
-                count = new CountDownTimer(60000, 1000) {
+                count = new CountDownTimer(30000, 1000) {
                     public void onTick(long millisUntilFinished) {
                         Log.d("MAC", device.getAddress());
                     }
                     public void onFinish() {
-                        if(mList.contains(device.getAddress())) {
-                            mRef.child(Mac).child(device.getAddress()).setValue(device.getName());
-                        } else {
-                            mList.add(device.getAddress());
-                        }
-                        cancel();
+                        mRef.child(device.getAddress().toUpperCase()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("TASK", "onComplete: " + task.getResult());
+                                    if (task.getResult().getValue() != null) {
+                                        if(mList.contains(device.getAddress().toUpperCase())) {
+                                            mRef.child(Mac).child(device.getAddress().toUpperCase()).setValue(device.getName());
+                                        } else {
+                                            mList.add(device.getAddress().toUpperCase());
+                                        }
+                                        cancel();
+                                    }
+                                }
+                            }
+                        });
+
                     }
                 };
 
@@ -254,13 +271,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
+    public void launchCovidNotification() {
 
+    }
+
+    public DatabaseReference getmRef() {
+        return mRef;
+    }
 
     public String getMac() {
         // TODO Hacerlo para Android > 8
         // mBluetoothAdapter.getAddress();
         // new Intent(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS)
-        if(Build.VERSION.SDK_INT <= 23) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
             launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
