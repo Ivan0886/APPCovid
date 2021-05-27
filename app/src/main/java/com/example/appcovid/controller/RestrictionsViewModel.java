@@ -62,14 +62,15 @@ public class RestrictionsViewModel extends ViewModel {
                                 .build();
                         RestrictionsService resService = retrofit.create(RestrictionsService.class);
 
-                        String city = response.body().getmCity();
+                        // TODO Devuelve la city vacio...
+                        //String city = response.body().getmCity();
 
                         // TODO Añadir el resto de ciudades de España
-                        if(city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas")) {
+                        /*if(city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas")) {
                             city = response.body().getmCity().replace(" ", "-");
                         } else {
                             city = response.body().getmCity().replace(" ", "+");
-                        }
+                        }*/
 
                         // TODO Consultar otra API que no limite a 500 la llamada o pagar por ella
                         // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)

@@ -106,16 +106,16 @@ public class RestrictionsActivity extends BaseActivity {
     private ArrayList findAnswerPermissions(ArrayList wanted) {
         ArrayList result = new ArrayList();
 
-        for (Object permiso : wanted) {
-            if (!youHavePermision((String)permiso)) {
-                result.add(permiso);
+        for (Object permission : wanted) {
+            if (!youHavePermission((String)permission)) {
+                result.add(permission);
             }
         }
         return result;
     }
 
 
-    private boolean youHavePermision(String permission) {
+    private boolean youHavePermission(String permission) {
         if (canMakeSmores()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
@@ -135,7 +135,7 @@ public class RestrictionsActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permisos, int[] grantResults) {
         if(requestCode == ALL_PERMISSIONS_RESULT)
             for (Object permission : mPermissionsToRequest) {
-                if (!youHavePermision((String)permission)) {
+                if (!youHavePermission((String)permission)) {
                     mPermissionsRejected.add(permission);
                 }
             }
