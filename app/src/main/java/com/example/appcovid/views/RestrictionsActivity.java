@@ -1,45 +1,52 @@
+// TODO Mirar por que no va
 package com.example.appcovid.views;
 
-import androidx.lifecycle.Observer;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.RestrictionsAdapter;
 import com.example.appcovid.controller.RestrictionsViewModel;
 import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.GPSLocation;
-import com.example.appcovid.model.RestrictionsItems;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class RestrictionsActivity extends BaseActivity {
-
-    private ArrayList mPermissionsToRequest;
-    private ArrayList mPermissionsRejected = new ArrayList();
-    private ArrayList mPermissions = new ArrayList();
-    private RestrictionsViewModel mDataRestrictions;
-    private RestrictionsAdapter mAdapter;
-
+/**
+ * Clase que contiene RestrictionsViewModel
+ * @author Iván Moriche Damas
+ * @author Rodrigo Garcia
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
+ * @see BaseActivity
+ * @see RestrictionsViewModel
+ */
+public class RestrictionsActivity extends BaseActivity
+{
     private final static int ALL_PERMISSIONS_RESULT = 101;
+    private ArrayList mPermissionsRejected = new ArrayList<>();
+    private ArrayList mPermissions = new ArrayList<>();
+    private ArrayList mPermissionsToRequest;
+    private RestrictionsAdapter mAdapter;
     private GPSLocation mGpsLocation;
 
-
+    /**
+     * Método que se ejecuta al arrancar la actividad. Se construye el RecylerView y se consultan los permisos
+     * @param savedInstanceState instancia de la actividad
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
@@ -56,30 +63,31 @@ public class RestrictionsActivity extends BaseActivity {
         mAdapter = new RestrictionsAdapter(this);
         recyclerView.setAdapter(mAdapter);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (mPermissionsToRequest.size() > 0) {
-                requestPermissions((String[]) mPermissionsToRequest.toArray(new String[mPermissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (mPermissionsToRequest.size() > 0)
+            {
+                requestPermissions((String[]) mPermissionsToRequest.toArray(
+                        new String[mPermissionsToRequest.size()]),
+                        ALL_PERMISSIONS_RESULT);
             }
         }
 
         mGpsLocation = new GPSLocation(this);
-        // Log.d("HOLAAAAAAAA", String.valueOf(mGpsLocation.getmLatitude()));
 
-        if (mGpsLocation.canGetLocation()) {
-
+        if (mGpsLocation.canGetLocation())
+        {
             // Se construye el ViewModel
-            mDataRestrictions = new ViewModelProvider(this).get(RestrictionsViewModel.class);
+            RestrictionsViewModel mDataRestrictions = new ViewModelProvider(this).get(RestrictionsViewModel.class);
 
             // Se comprueba si los datos han cambiado
-            mDataRestrictions.getmData(mGpsLocation).observe(this, new Observer<List<RestrictionsItems>>() {
-                @Override
-                public void onChanged(List<RestrictionsItems> restrictionsItems) {
-                    // Si la llamada ha ido bien
-                    if(restrictionsItems != null) {
-                        mAdapter.addData(new ArrayList(restrictionsItems));
-                    } else {
-                        launchError("Ha surgido un problema llamando a la API");
-                    }
+            mDataRestrictions.getmData(mGpsLocation).observe(this, restrictionsItems -> {
+                // Si la llamada ha ido bien
+                if(restrictionsItems != null)
+                {
+                    mAdapter.addData(new ArrayList<>(restrictionsItems));
+                } else {
+                    launchAlert(R.string.text_ok, R.string.error_text_service);
                 }
             });
         } else {
@@ -88,26 +96,19 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    private void launchError(String messageError) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.error_title));
-        builder.setMessage(messageError);
-        builder.setPositiveButton(R.string.text_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        builder.create().show();
-    }
+    /**
+     * Método que consulta los permisos de App
+     * @param wanted listado de permisos
+     * @return result
+     */
+    private ArrayList findAnswerPermissions(ArrayList wanted)
+    {
+        ArrayList result = new ArrayList<>();
 
-
-    private ArrayList findAnswerPermissions(ArrayList wanted) {
-        ArrayList result = new ArrayList();
-
-        for (Object permission : wanted) {
-            if (!youHavePermission((String)permission)) {
+        for (Object permission : wanted)
+        {
+            if (!youHavePermission((String)permission))
+            {
                 result.add(permission);
             }
         }
@@ -115,9 +116,17 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    private boolean youHavePermission(String permission) {
-        if (canMakeSmores()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    /**
+     * Método que comprueba si tienes permiso
+     * @param permission aceptación del permiso
+     * @return true
+     */
+    private boolean youHavePermission(String permission)
+    {
+        if (canMakeSmores())
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
                 return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
             }
         }
@@ -125,24 +134,43 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
-    private boolean canMakeSmores() {
+    /**
+     * Método que comprueba la versión del dispositivo
+     * @return Build.Version
+     */
+    private boolean canMakeSmores()
+    {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
 
+    /**
+     * Método que solicita los permisos de la App de distinta forma dependiendo de la versión del dispositivo
+     * @param requestCode codigo
+     * @param permisos array de permisos
+     * @param grantResults permisos aceptados
+     */
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permisos, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permisos, @NonNull int[] grantResults)
+    {
         if(requestCode == ALL_PERMISSIONS_RESULT)
-            for (Object permission : mPermissionsToRequest) {
-                if (!youHavePermission((String)permission)) {
+        {
+            for (Object permission : mPermissionsToRequest)
+            {
+                if (!youHavePermission((String)permission))
+                {
                     mPermissionsRejected.add(permission);
                 }
             }
+        }
 
-        if (mPermissionsRejected.size() > 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0))) {
+        if (mPermissionsRejected.size() > 0)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0)))
+                {
                     finish();
                 }
             }
@@ -150,14 +178,14 @@ public class RestrictionsActivity extends BaseActivity {
     }
 
 
+    /**
+     * Método que se ejecuta cuando se para la actividad. Se para el escuchador de mGpsLocation
+     * @see GPSLocation
+     */
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         super.onDestroy();
         mGpsLocation.stopListener();
-    }
-
-
-    public void OnClickBack(View v) {
-       finish();
     }
 }

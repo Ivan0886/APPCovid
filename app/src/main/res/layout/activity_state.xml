@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:background="@drawable/ic_button_main"
-                    android:onClick="confirmCovid"
+                    android:onClick="alertConfirmCovid"
                     android:text="@string/button_covid" />
             </LinearLayout>
 

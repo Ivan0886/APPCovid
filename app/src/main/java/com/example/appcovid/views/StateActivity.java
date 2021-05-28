@@ -1,61 +1,62 @@
 package com.example.appcovid.views;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.appcovid.R;
 import com.example.appcovid.model.BaseActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import org.threeten.bp.LocalDate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class StateActivity extends BaseActivity {
-
+/**
+ * Clase que ¿¿???
+ * @author Iván Moriche Damas
+ * @author Rodrigo Garcia
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
+ * @see BaseActivity
+ */
+public class StateActivity extends BaseActivity
+{
     private Button mButton;
     private SharedPreferences mPreferences;
-    private DatabaseReference ref;
-    private OnCompleteListener <DataSnapshot> listener;
-    private Map<String, Object> values;
+    private DatabaseReference mRef;
+    private OnCompleteListener <DataSnapshot> mListener;
 
-
+    /**
+     * Método que se ejecuta al arrancar la actividad. Se consulta el estado del botón y se desactiva/habilita si
+     * han pasado 14 dias
+     * @param savedInstanceState instancia de la actividad
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
-        mButton = (Button) findViewById(R.id.button_covid);
-        mButton.setEnabled(checkTimeConfirmationCovid()); // Se comprueba si han pasado 14 dias
-
-        values = new HashMap<>();
-
-        // TODO ¿Crear un fragmento en las notificaciones?
+        mButton = findViewById(R.id.button_covid);
+        // Se comprueba si han pasado 14 dias
+        mButton.setEnabled(checkTimeConfirmationCovid());
     }
 
 
-    private boolean checkTimeConfirmationCovid() {
+    /**
+     * Método que devuelve si aún se tiene COVID-19
+     * @return value
+     */
+    private boolean checkTimeConfirmationCovid()
+    {
         String date = mPreferences.getString("fechaCovid", "unknown");
         boolean value = true;
 
@@ -67,56 +68,43 @@ public class StateActivity extends BaseActivity {
     }
 
 
-    public void backMainActivity(View v) {
-       // startActivity(new Intent(StateActivity.this, MainActivity.class));
-        finish();
-    }
-
-
-    public void confirmCovid(View v) {
+    /**
+     * Método que lanza un alert para confirmar el positivo de COVID-19 e
+     * inhabilita el botón en el caso de que el usuario pulse SI
+     * @param v
+     */
+    public void alertConfirmCovid(View v)
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_state);
         builder.setMessage(R.string.dialog_text_state);
         builder.setCancelable(false);
 
-        builder.setPositiveButton(R.string.text_si, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // Este codigo permite guardar la fecha aunque se destruya la actividad
-                SharedPreferences.Editor myEditor = mPreferences.edit();
-               /* myEditor.putString("fechaCovid", LocalDate.now().toString()); // Se guarda la fecha que el usuario confirma que tiene el COVID
-                myEditor.commit();
-                */
-                mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
+        builder.setPositiveButton(R.string.text_si, (dialog, id) -> {
+            mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
 
-                ref = getmRef().child(Mac.toUpperCase());
-                listener = new OnCompleteListener <DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task <DataSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DataSnapshot o :
-                                    task.getResult().getChildren()) {
-                                Log.d("VALUES", "onComplete: " + o.getKey() + " " + o.getValue());
-                                if (!o.getKey().equals("CovidAlert")) {
-                                    getmRef().child(o.getKey()).child("CovidAlert").setValue(true);
-                                }
-                            }
-
+            mRef = getmRef().child(Mac.toUpperCase());
+            mListener = task -> {
+                if (task.isSuccessful())
+                {
+                    for (DataSnapshot o : task.getResult().getChildren())
+                    {
+                        if (!o.getKey().equals("CovidAlert"))
+                        {
+                            getmRef().child(o.getKey()).child("CovidAlert").setValue(true);
                         }
                     }
-                };
-                ref.get().addOnCompleteListener(listener);
 
-                dialog.dismiss();
+                }
+            };
+            mRef.get().addOnCompleteListener(mListener);
 
-                showToast(R.string.toast_text_state);
-            }
+            dialog.dismiss();
+
+            showToast();
         });
 
-        builder.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton(R.string.text_no, (dialog, id) -> dialog.cancel());
 
         Dialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
@@ -124,27 +112,21 @@ public class StateActivity extends BaseActivity {
     }
 
 
-    private void showToast(int mensaje) {
-        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
+    /**
+     * Método que muestra un mensaje de estado
+     */
+    private void showToast()
+    {
+        Toast.makeText(this, R.string.toast_text_state, Toast.LENGTH_LONG).show();
     }
 
+
+    /**
+     * Método que se ejecuta cuando se para la actividad
+     */
     @Override
-    protected void onStop() {
-        /*if (ref != null && listener != null) {
-
-        }
-        if (values != null && !values.isEmpty()) {
-            Log.d("SNAPSHOT", "onStop: Lista: " + values);
-        }
-
-        Set<String> mMacSet = values.keySet();
-
-        for (String key :
-                mMacSet) {
-            getmRef().child(key).child("CovidAlert").setValue(true);
-        }
-        */
+    protected void onStop()
+    {
         super.onStop();
-
     }
 }

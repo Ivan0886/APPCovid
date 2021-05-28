@@ -2,21 +2,34 @@ package com.example.appcovid.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RestrictionsItems {
+/**
+ * Clase restrición
+ * @author Iván Moriche Damas
+ * @author Rodrigo Garcia
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
+ */
+public class RestrictionsItems
+{
+    @SerializedName(value="title") private String mTitle;
+    @SerializedName(value="description") private String mDescription;
 
-    @SerializedName(value="title")
-    private String mTitle;
-
-    @SerializedName(value="description")
-    private String mDescription;
-
-
-    public String getmTitle() {
+    /**
+     * Método que devuelve el título de la restrición
+     * @return mTitle
+     */
+    public String getmTitle()
+    {
         return mTitle;
     }
 
 
-    public String getmDescription() {
+    /**
+     * Método que devuelve el texto de la restrición
+     * @return mDescription
+     */
+    public String getmDescription()
+    {
         return mDescription;
     }
 }
