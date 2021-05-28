@@ -10,6 +10,7 @@ import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.RestrictionsAdapter;
@@ -87,7 +88,8 @@ public class RestrictionsActivity extends BaseActivity
                 {
                     mAdapter.addData(new ArrayList<>(restrictionsItems));
                 } else {
-                    launchAlert(R.string.text_ok, R.string.error_text_service);
+                    Log.d("Holaaaaa20", "HHHHHHHHH");
+                    launchAlert(R.string.error_title, R.string.error_text_service);
                 }
             });
         } else {

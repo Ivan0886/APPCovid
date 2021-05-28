@@ -19,5 +19,5 @@ import retrofit2.http.Query;
 public interface RestrictionsService
 {
     @GET("restriction?")
-    Call<List<RestrictionFeed>> getRestrictions(@Query("place") String city, @Query("token") String key);
+    Call<List<RestrictionFeed>> getRestrictions(@Query("zipcode") String postalCode, @Query("token") String key);
 }

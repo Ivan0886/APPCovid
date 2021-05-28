@@ -4,230 +4,184 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.example.appcovid.R;
 
-import java.util.List;
-
-public class GPSLocation extends Service implements LocationListener {
-
+/**
+ * Clase que maneja los permisos y localización GPS
+ * @author Iván Moriche Damas
+ * @author Rodrigo Garcia
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
+ * @see LocationListener
+ * @see Service
+ */
+public class GPSLocation extends Service implements LocationListener
+{
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
-    private static final String URL_GPS = "https://geocode.xyz/";
-    private static final String URL_RES = "https://api.quecovid.es/restriction/";
-
-    private final Context mContext;
-
-    private boolean mCheckGPS = false;
     private boolean mCanGetLocation = false;
-
+    private final Context mContext;
     private Location mLocation;
-
     private double mLatitude;
     private double mLongitude;
-    private List<RestrictionsItems> mRestriciones;
-
     protected LocationManager locationManager;
 
 
-    public GPSLocation(Context mContext) {
+    /**
+     * Contructor de la clase
+     * @param mContext contexto de la actividad
+     */
+    public GPSLocation(Context mContext)
+    {
         this.mContext = mContext;
         this.mLocation = getmLocation();
     }
 
 
-    private Location getmLocation() {
-        try {
+    /**
+     * Método que devuelve la localización
+     * @return mLocation
+     */
+    private Location getmLocation()
+    {
+        try
+        {
             locationManager = (LocationManager)mContext.getSystemService(LOCATION_SERVICE);
 
             // Obtiene el estado GPS
-            mCheckGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean mCheckGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            // boolean  mCheckGPS = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (!mCheckGPS) {
+            if (!mCheckGPS)
+            {
                 Toast.makeText(mContext, R.string.error_text_service, Toast.LENGTH_SHORT).show();
             } else {
                 this.mCanGetLocation = true;
 
                 // Si el GPS está habilitado, obtiene latitude y longitud
-                if (mCheckGPS) {
-                    if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    }
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION);
+                {}
 
-                    locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
-                    if (locationManager != null) {
-                        mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                        /*if (mLocalizacion != null) {
-
-                            // Se construye el retrofit
-                            Retrofit retrofit = new Retrofit
-                                    .Builder()
-                                    .baseUrl(URL_GPS)
-                                    .addConverterFactory(GsonConverterFactory.create())
-                                    .build();
-                            GPSService gpsService = retrofit.create(GPSService.class);
-
-                            // Se construye la llamada
-                            Call<GPSFeed> callAsync = gpsService.getAddress(mLocalizacion.getLatitude(), mLocalizacion.getLongitude());
-
-                            // Se hace la llamada a la API
-                            callAsync.enqueue(new Callback<GPSFeed>() {
-                                @Override
-                                public void onResponse(Call<GPSFeed> call, Response<GPSFeed> response) {
-                                    if (response.isSuccessful()) {
-                                        // La API responde correctamente
-                                        Retrofit retrofit = new Retrofit
-                                                .Builder()
-                                                .baseUrl(URL_RES)
-                                                .addConverterFactory(GsonConverterFactory.create())
-                                                .build();
-                                        RestrictionsService resService = retrofit.create(RestrictionsService.class);
-
-                                        // Se construye la llamada
-                                        // Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(response.body().getmCity(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
-                                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("cadiz", "lR2I41RV8NhDuEkS51V8Z9NLJ");
-
-                                        // Se hace la llamada a la API
-                                        callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
-                                            @Override
-                                            public void onResponse(Call<List<RestrictionFeed>> call, Response<List<RestrictionFeed>> response) {
-                                                if (response.isSuccessful()) {
-                                                    mRestriciones = response.body().get(0).getItems();
-                                                    //Log.d("ESTADO", getmRestriciones().get(0).getmTitulo());
-                                                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
-                                                    //Log.d("ESTADO", response.body().get(0).getItems().get(0).getmTitulo());
-                                                } else {
-                                                    Log.d("ESTADO2","ssgsgs");
-                                                }
-                                            }
-                                            @Override
-                                            public void onFailure(Call<List<RestrictionFeed>> call, Throwable t) {
-
-                                            }
-                                        });
-                                        //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
-                                    } else {
-                                        Log.d("ESTADO2","ssgsgs");
-                                    }
-                                    //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
-                                }
-
-                                @Override
-                                public void onFailure(Call<GPSFeed> call, Throwable t) {
-                                    Log.d("ESTADO3","fsddf");
-                                }
-                            });
-
-                            // mLatitude = mLocalizacion.getLatitude();
-                            // mLongitude = mLocalizacion.getLongitude();
-                        }*/
-                    }
+                if (locationManager != null)
+                {
+                    mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    //mLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //Log.d("ESTADO", mRestriciones.get(0).getmTitulo());
         return mLocation;
     }
 
 
-    public List<RestrictionsItems> getmRestrictions() {
-        return mRestriciones;
-    }
-
-
-    public double getmLongitude() {
-        if (mLocation != null) {
+    /**
+     * Método que devulve la longitud
+     * @return mLongitude
+     */
+    public double getmLongitude()
+    {
+        if (mLocation != null)
+        {
             mLongitude = mLocation.getLongitude();
         }
         return mLongitude;
     }
 
 
-    public double getmLatitude() {
-        if (mLocation != null) {
+    /**
+     * Método que devulve la latitud
+     * @return mLatitude
+     */
+    public double getmLatitude()
+    {
+        if (mLocation != null)
+        {
             mLatitude = mLocation.getLatitude();
         }
         return mLatitude;
     }
 
 
-    public boolean canGetLocation() {
+    /**
+     * Método que comprueba si se puede obtener la localización
+     * @return mCanGetLocation
+     */
+    public boolean canGetLocation()
+    {
         return this.mCanGetLocation;
     }
 
 
-    public void launchAlertConfig() {
+    /**
+     * Método que lanza un alert para activar el GPS del dispositivo
+     */
+    public void launchAlertConfig()
+    {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setTitle(R.string.error_title);
         alertDialog.setMessage(R.string.error_text_active_gps);
 
-        alertDialog.setPositiveButton(R.string.text_si, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
-            }
+        alertDialog.setPositiveButton(R.string.text_si, (dialog, which) -> {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            mContext.startActivity(intent);
         });
 
-        alertDialog.setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        alertDialog.setNegativeButton(R.string.text_no, (dialog, which) -> dialog.cancel());
 
         alertDialog.show();
     }
 
 
-    public void stopListener() {
-        if (locationManager != null) {
-
+    /**
+     * Método que para el escuchador
+     */
+    public void stopListener()
+    {
+        if (locationManager != null)
+        {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
                 return;
             }
             locationManager.removeUpdates(GPSLocation.this);
         }
     }
 
-
+    /**
+     * @param intent i
+     * @return null
+     */
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-
+    /**
+     * Escuchador cuando cambia la localización
+     * @param location localización
+     */
     @Override
-    public void onLocationChanged(Location location) { }
-
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) { }
-
-
-    @Override
-    public void onProviderEnabled(String s) { }
-
-
-    @Override
-    public void onProviderDisabled(String s) { }
+    public void onLocationChanged(@NonNull Location location) { }
 }

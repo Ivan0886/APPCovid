@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="AppCovid" pattern="src[APPCovid.app]:com.example.appcovid.controller.*||src[APPCovid.app]:com.example.appcovid.views.*||src[APPCovid.app]:com.example.appcovid.model.*" />
+</component>

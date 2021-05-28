@@ -1,5 +1,6 @@
 package com.example.appcovid.controller;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,23 +17,42 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-public class NewsViewModel extends ViewModel {
-
+/**
+ * Clase que maneja los datos de cada noticia
+ * @author Iván Moriche Damas
+ * @author Rodrigo Garcia
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
+ * @see ViewModel
+ */
+public class NewsViewModel extends ViewModel
+{
     private MutableLiveData<List<RssItem>> mData;
     private static final String URL_RSS = "https://www.rtve.es/";
 
-
-    public LiveData<List<RssItem>> getmData() {
-        if(mData == null) {
-            mData = new MutableLiveData<List<RssItem>>();
-            mData.setValue(new ArrayList<RssItem>());
+    /**
+     * Método que devuelve la lista de las noticias
+     * @return mData
+     */
+    public LiveData<List<RssItem>> getmData()
+    {
+        if(mData == null)
+        {
+            mData = new MutableLiveData<>();
+            mData.setValue(new ArrayList<>());
             loadData();
         }
 
         return mData;
     }
 
-    private void loadData() {
+
+    /**
+     * Método que carga los datos y construye las llamada a la API
+     * @deprecated SimpleXmlConverterFactory
+     */
+    private void loadData()
+    {
         // Se construye el retrofit
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -45,11 +65,15 @@ public class NewsViewModel extends ViewModel {
         Call<RssFeed> callAsync = rssService.getFeed();
 
         // Se hace la llamada a la API
-        callAsync.enqueue(new Callback<RssFeed>() {
+        callAsync.enqueue(new Callback<RssFeed>()
+        {
             @Override
-            public void onResponse(Call<RssFeed> call, Response<RssFeed> response) {
-                if (response.isSuccessful()) {
+            public void onResponse(@NonNull Call<RssFeed> call, @NonNull Response<RssFeed> response)
+            {
+                if (response.isSuccessful())
+                {
                     // La API responde correctamente
+                    assert response.body() != null;
                     mData.postValue(response.body().getmChannel().getItems());
                 } else {
                     mData.postValue(null);
@@ -57,7 +81,8 @@ public class NewsViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<RssFeed> call, Throwable t) {
+            public void onFailure(@NonNull Call<RssFeed> call, @NonNull Throwable t)
+            {
                 mData.postValue(null);
             }
         });

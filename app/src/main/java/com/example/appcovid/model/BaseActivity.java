@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
@@ -233,6 +234,7 @@ public abstract class BaseActivity extends AppCompatActivity
         builder.setCancelable(false);
 
         builder.setPositiveButton(R.string.text_ok, (dialog, which) -> {
+
             if (text == R.string.main_dialog_textBTError || text == R.string.error_text_service)
             {
                 dialog.dismiss();
@@ -278,7 +280,8 @@ public abstract class BaseActivity extends AppCompatActivity
         {
             Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
-            launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+            Mac = "jkhkjhkjhkj";
+            //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
         }
         return Mac;
     }

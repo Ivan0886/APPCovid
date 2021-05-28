@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName;
 public class GPSFeed
 {
     @SerializedName(value="city") private String mCity;
+    @SerializedName(value="postal") private String mPostalCode;
 
     /**
      * Método que devuelve la ciudad
@@ -20,5 +21,15 @@ public class GPSFeed
     public String getmCity()
     {
         return mCity;
+    }
+
+
+    /**
+     * Método que devuelve el código postal
+     * @return mPostalCode
+     */
+    public String getmPostalCode()
+    {
+        return mPostalCode;
     }
 }

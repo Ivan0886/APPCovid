@@ -20,7 +20,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Clase que construye la vista de cada restricción
+ * Clase que maneja los datos de cada restricción
  * @author Iván Moriche Damas
  * @author Rodrigo Garcia
  * @author Iustin Mocanu
@@ -86,21 +86,22 @@ public class RestrictionsViewModel extends ViewModel
                                 .build();
                         RestrictionsService resService = retrofit.create(RestrictionsService.class);
 
-                        // TODO Devuelve la city vacio...
-                        //String city = response.body().getmCity();
+                        String postalCode = response.body().getmPostalCode();
+                        /*String city = response.body().getmCity();
 
                         // TODO Añadir el resto de ciudades de España
-                        /*if (city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas"))
+                        if (city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas"))
                         {
                             city = response.body().getmCity().replace(" ", "-");
                         } else {
                             city = response.body().getmCity().replace(" ", "+");
-                        }*/
+                        }
 
                         // TODO Consultar otra API que no limite a 500 la llamada o pagar por ella
                         // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)
                         //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
-                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");
+                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");*/
+                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(postalCode, "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
                         // Se hace la llamada a la API
                         callAsync.enqueue(new Callback<List<RestrictionFeed>>()

@@ -63,7 +63,7 @@ public class NewsActivity extends BaseActivity
                     startActivity(i);
                 });
             } else {
-                launchAlert(R.string.text_ok, R.string.error_text_service);
+                launchAlert(R.string.error_title, R.string.error_text_service);
             }
         });
     }
