@@ -77,7 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     Log.d("TASK", "onComplete: " + task.getResult());
                                     if (task.getResult().getValue() != null) {
                                         if(mList.contains(device.getAddress().toUpperCase())) {
-                                            mRef.child(Mac).child(device.getAddress().toUpperCase()).setValue(device.getName());
+                                            mRef.child(Mac.toUpperCase()).child(device.getAddress().toUpperCase()).setValue(device.getName());
                                         } else {
                                             mList.add(device.getAddress().toUpperCase());
                                         }

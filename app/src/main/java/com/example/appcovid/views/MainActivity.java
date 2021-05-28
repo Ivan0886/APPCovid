@@ -29,29 +29,20 @@ public class MainActivity extends BaseActivity {
         Intent i = getIntent();
         String mac = getMac().toUpperCase();
 
-        getmRef().child(mac).child("CovidAlert").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    Log.d("TASK", "onComplete: " + task.getResult().getValue());
-                    /*if (task.getResult().getValue(Boolean.class)) {
-                        launchNotification();
-                    }
-                    getmRef().child(mac).child("CovidAlert").setValue(false);
-
-                     */
-                }
-            }
-        });
-
-
+        //comprobar que la aplicacion se arranca desde muerta
         if (i.getStringExtra("ALERTACOVID") == null) {
+            Log.d("HOLA", "onCreate: Estaba muerta chacho");
+
             getmRef().child(mac).child("CovidAlert").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     // TODO: Sacar notificacion de alerta covid
-                    if (snapshot.getValue(Boolean.class)) {
+
+                    if (snapshot.getValue(Boolean.class) != null && snapshot.getValue(Boolean.class)) {
                         launchNotification();
+                        getmRef().child(mac).child("CovidAlert").setValue(false);
+                    } else {
+                        getmRef().child(mac).child("CovidAlert").setValue(false);
                     }
                 }
 
@@ -60,7 +51,10 @@ public class MainActivity extends BaseActivity {
 
                 }
             });
+        } else {
+            getmRef().child(mac).child("CovidAlert").setValue(false);
         }
+
     }
 
     public void onClickLanzarActivity(View v) {

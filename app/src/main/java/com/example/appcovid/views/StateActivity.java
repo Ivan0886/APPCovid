@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.threeten.bp.LocalDate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class StateActivity extends BaseActivity {
     private Button mButton;
     private SharedPreferences mPreferences;
     private DatabaseReference ref;
-    private ChildEventListener listener;
+    private OnCompleteListener <DataSnapshot> listener;
     private Map<String, Object> values;
 
 
@@ -84,46 +85,27 @@ public class StateActivity extends BaseActivity {
                 SharedPreferences.Editor myEditor = mPreferences.edit();
                /* myEditor.putString("fechaCovid", LocalDate.now().toString()); // Se guarda la fecha que el usuario confirma que tiene el COVID
                 myEditor.commit();
-*/
+                */
                 mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
 
-                ref = getmRef().child(Mac);
-                listener = new ChildEventListener() {
-
+                ref = getmRef().child(Mac.toUpperCase());
+                listener = new OnCompleteListener <DataSnapshot>() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        Log.d("SNAPSHOT", "onChildAdded: " + snapshot);
-                        if (!snapshot.getKey().startsWith("-") && !snapshot.getKey().contains("CovidAlert")) {
-                            values.put(snapshot.getKey(), snapshot.getValue());
+                    public void onComplete(@NonNull Task <DataSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DataSnapshot o :
+                                    task.getResult().getChildren()) {
+                                Log.d("VALUES", "onComplete: " + o.getKey() + " " + o.getValue());
+                                if (!o.getKey().equals("CovidAlert")) {
+                                    getmRef().child(o.getKey()).child("CovidAlert").setValue(true);
+                                }
+                            }
+
                         }
                     }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        Log.d("SNAPSHOT", "onChildChanged: " + snapshot);
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                        Log.d("SNAPSHOT", "onChildRemoved: " + snapshot);
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull  DataSnapshot snapshot, String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
                 };
-                ref.addChildEventListener(listener);
+                ref.get().addOnCompleteListener(listener);
 
-                String randomKey = ref.push().getKey();
-
-                ref.child(randomKey).setValue(false);
-                ref.child(randomKey).removeValue();
                 dialog.dismiss();
 
                 showToast(R.string.toast_text_state);
@@ -148,8 +130,8 @@ public class StateActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
-        if (ref != null && listener != null) {
-            ref.removeEventListener(listener);
+        /*if (ref != null && listener != null) {
+
         }
         if (values != null && !values.isEmpty()) {
             Log.d("SNAPSHOT", "onStop: Lista: " + values);
@@ -161,7 +143,8 @@ public class StateActivity extends BaseActivity {
                 mMacSet) {
             getmRef().child(key).child("CovidAlert").setValue(true);
         }
-
+        */
         super.onStop();
+
     }
 }
