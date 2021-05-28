@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
@@ -280,8 +279,8 @@ public abstract class BaseActivity extends AppCompatActivity
         {
             Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
-            Mac = "jkhkjhkjhkj";
-            //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+            //Mac = "06:06:5A:43:40";
+            launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
         }
         return Mac;
     }

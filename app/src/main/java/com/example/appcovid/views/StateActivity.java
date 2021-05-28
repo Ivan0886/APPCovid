@@ -71,7 +71,7 @@ public class StateActivity extends BaseActivity
     /**
      * Método que lanza un alert para confirmar el positivo de COVID-19 e
      * inhabilita el botón en el caso de que el usuario pulse SI
-     * @param v
+     * @param v vista
      */
     public void alertConfirmCovid(View v)
     {
@@ -82,6 +82,7 @@ public class StateActivity extends BaseActivity
 
         builder.setPositiveButton(R.string.text_si, (dialog, id) -> {
             mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
+            mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
 
             mRef = getmRef().child(Mac.toUpperCase());
             mListener = task -> {
