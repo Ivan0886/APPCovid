@@ -7,13 +7,12 @@ Nuestra App: CovidRecord
 
 Descripción
 
-Aplicación de información de protocolos COVID-19 basado en la ubicación del usuario. También la aplicación registrará las ubicaciones en las que ha estado el usuario en los últimos 7 días en una base de datos (SQLite o MySQL) en el caso de que el usuario se contagie, para saber dónde se ha podido contagiar. La aplicación también tendrá
-una página de noticias relevantes a la situación de la pandemia.
+Aplicación de información de protocolos COVID-19 basado en la ubicación del usuario. La aplicación registra cuando un usuario ha estado en contacto durante "X" tiempo con otro usuario en una BBDD (FireBase). En el caso de que uno de los contactos se contagie y lo avise, una notificación PUSH es mandada. La aplicación también tendrá una página de noticias relevantes a la situación de la pandemia y las posibles restricciones de su zona.
 
 Requisitos de la app
 
-La app requerirá geolocalización para mostrar un mapa de la ubicación actual.
-Acceso a base de datos para el registro de ubicaciones.
+La app requerirá geolocalización para mostrar las restricciones de su zona.
+Acceso a base de datos para el registro de contactos.
 Acceso a Internet para el boletín de noticias y para mostrar las medidas de la zona.
 
 
