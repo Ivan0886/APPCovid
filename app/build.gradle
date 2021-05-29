@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'   // Google Services plugin
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -28,18 +28,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    /*packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude("META-INF/*.kotlin_module")
-    }*/
 }
 
 dependencies {
@@ -54,24 +42,24 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'com.google.firebase:firebase-database'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     // Libreria retrofit, simpleXML y GSON
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-simplexml:2.6.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     // Libreria ciclos de vida
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
     // Libreria Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     // Servicios Google
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
     //implementation 'androidx.multidex:multidex:2.0.1'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
