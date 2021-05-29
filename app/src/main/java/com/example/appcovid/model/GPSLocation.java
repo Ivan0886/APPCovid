@@ -174,7 +174,8 @@ public class GPSLocation extends Service implements LocationListener
      */
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent intent)
+    {
         return null;
     }
 

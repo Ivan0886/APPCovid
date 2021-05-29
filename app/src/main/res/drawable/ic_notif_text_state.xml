@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:bottomLeftRadius="15dp"
+        android:bottomRightRadius="15dp" />
+    <gradient
+        android:startColor="@color/notif_state1"
+        android:endColor="@color/notif_state2"
+        android:type="linear"/>
+    <stroke
+        android:width="5px"
+        android:color="@color/black" />
+</shape>

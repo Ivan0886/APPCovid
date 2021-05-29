@@ -14,4 +14,8 @@
     <color name="elementRestriction1">#FECEAD</color>
     <color name="elementRestriction2">#EAD162</color>
     <color name="buttonSelected">#FFFFFF</color>
+    <color name="info_state1">#D1FEAD</color>
+    <color name="info_state2">#95CE68</color>
+    <color name="notif_state1">#E0E0E0</color>
+    <color name="notif_state2">#AEAEAE</color>
 </resources>
