@@ -10,21 +10,12 @@
     <string name="error_text_service">El servicio no está disponible</string>
     <string name="error_title">Error</string>
     <string name="information_text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br/>
-        \nDonec nec mollis ex, et elementum quam.<br/>
-        \nMorbi eget libero vel quam vestibulum facilisis quis eu purus.<br/>
-        \nNullam ac ornare libero, sed porta eros.<br/>
-        \nNulla molestie nibh non odio mattis suscipit.<br/>
-        \nCurabitur vel lacus massa.<br/>
-        \nDuis sollicitudin efficitur est ac feugiat.<br/>
-        \nSuspendisse lobortis ex in elementum venenatis.<br/>
-        \nAliquam vehicula sem in accumsan interdum.<br/>
-        \nInteger a erat eu nibh luctus elementum.<br/>
-        \nProin vel eleifend elit, in blandit mi.<br/>
-        \nAenean scelerisque leo eu est ultrices rhoncus eget ac sapien.<br/>
-        \nNullam nec libero nisl.<br/>
-        \nCras egestas nibh quis tellus condimentum, eget ultricies arcu ultricies.<br/>
-        \nPhasellus arcu leo, tristique non bibendum quis, mollis eget urna.
+        La aplicación usa las direcciones únicas de los dispositivos para detectar y registrar
+        usuarios cercanos. <br/>
+        La sección de noticias hace uso de la feed de RSS de RTVE. <br/>
+        La sección de restricciones hace uso de los servicios de Google para conseguir
+        la localización del usuario, la API de Geocode.xyz para conseguir el código postal del mismo
+        y la API de quecovid.es para conseguir las últimas restricciones de movilidad y sanitarias.
     </string>
     <string name="information_title">Información</string>
     <!-- Referencia a activity_state.xml y StateActivity.java -->
@@ -84,10 +75,10 @@
     <string name="new2_title">Noticia 2</string>
     <string name="new3_title">Noticia 3</string>
     <string name="notifications_text">
-        * Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br/>
-        \n* Donec nec mollis ex, et elementum quam.<br/>
-        \n* Morbi eget libero vel quam vestibulum facilisis quis eu purus.<br/>
-        \n* Nullam ac ornare libero, sed porta eros.
+        31/05/2021:
+        Por motivos laborales, algunas secciones no estarán disponibles: <br/>
+        - Sección de noticias no disponible (30/05 - 06/06) <br/>
+        - Notificaciones no disponibles (31/05 - 07/06) <br/>
     </string>
     <string name="notifications_title">Notificaciones</string>
     <string name="main_dialog_title">Identificador único</string>
