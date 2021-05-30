@@ -65,7 +65,8 @@ public class RestrictionsActivity extends BaseActivity
      */
     @SuppressLint("VisibleForTests")
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
@@ -79,8 +80,10 @@ public class RestrictionsActivity extends BaseActivity
 
         mPermissionsToRequest = findAnswerPermissions((ArrayList) mPermissions);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (mPermissionsToRequest.size() > 0) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (mPermissionsToRequest.size() > 0)
+            {
                 requestPermissions((String[]) mPermissionsToRequest.toArray(
                         new String[mPermissionsToRequest.size()]),
                         ALL_PERMISSIONS_RESULT);
@@ -95,7 +98,8 @@ public class RestrictionsActivity extends BaseActivity
             return;
         }
 
-        fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+        fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken()
+        {
             @Override
             public boolean isCancellationRequested()
             {
@@ -110,7 +114,8 @@ public class RestrictionsActivity extends BaseActivity
             }}).addOnSuccessListener(location -> {
                 Geocoder geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
-                try {
+                try
+                {
                     addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -172,24 +177,31 @@ public class RestrictionsActivity extends BaseActivity
     /**
      * Método que solicita los permisos de la App de distinta forma dependiendo de la versión del dispositivo
      * @param requestCode codigo
-     * @param permisos array de permisos
+     * @param permissions array de permisos
      * @param grantResults permisos aceptados
      */
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permisos, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permisos, grantResults);
-        if (requestCode == ALL_PERMISSIONS_RESULT) {
-            for (Object permission : mPermissionsToRequest) {
-                if (!youHavePermission((String) permission)) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == ALL_PERMISSIONS_RESULT)
+        {
+            for (Object permission : mPermissionsToRequest)
+            {
+                if (!youHavePermission((String) permission))
+                {
                     mPermissionsRejected.add(permission);
                 }
             }
         }
 
-        if (mPermissionsRejected.size() > 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0))) {
+        if (mPermissionsRejected.size() > 0)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0)))
+                {
                     finish();
                 }
             }
@@ -225,7 +237,8 @@ public class RestrictionsActivity extends BaseActivity
                     assert response.body() != null;
                     List<RestrictionsItems> listRestrictions = new ArrayList<>();
 
-                    for (RestrictionFeed restrictions : response.body()) {
+                    for (RestrictionFeed restrictions : response.body())
+                    {
                         listRestrictions.addAll(restrictions.getItems());
                     }
 
