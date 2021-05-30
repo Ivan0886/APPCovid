@@ -1,17 +1,34 @@
 package com.example.appcovid.controller;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.GPSFeed;
 import com.example.appcovid.model.GPSLocation;
 import com.example.appcovid.model.RestrictionFeed;
 import com.example.appcovid.model.RestrictionsItems;
+import com.example.appcovid.model.RssFeed;
+import com.example.appcovid.model.RssItem;
+import com.example.appcovid.views.RestrictionsActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,110 +47,70 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestrictionsViewModel extends ViewModel
 {
     private MutableLiveData<List<RestrictionsItems>> mData;
-    private static final String URL_GPS = "https://geocode.xyz/";
     private static final String URL_RES = "https://api.quecovid.es/restriction/";
-    private GPSLocation mGpsLocation;
-
+    private boolean gps_enable = false;
+    private boolean network_enable = false;
 
     /**
-     * Método que devuelve la lista de las restriciones
-     * @param mGpsLocation localización actual
+     * Método que devuelve la lista de las noticias
      * @return mData
      */
-    public LiveData<List<RestrictionsItems>> getmData(GPSLocation mGpsLocation)
+    public LiveData<List<RestrictionsItems>> getmData()
     {
         if(mData == null)
         {
             mData = new MutableLiveData<>();
             mData.setValue(new ArrayList<>());
-            loadData(mGpsLocation);
+            loadData();
         }
+
         return mData;
     }
 
+
     /**
-     * Método que carga los datos y construye las llamadas a las APIs
-     * @param mGpsLocation localización actual
+     * Método que carga los datos y construye las llamada a la API
      */
-    private void loadData(GPSLocation mGpsLocation)
+    private void loadData()
     {
-        if (mGpsLocation != null)
+        // Se construye el retrofit
+        Retrofit retrofit = new Retrofit
+                .Builder()
+                .baseUrl(URL_RES)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RestrictionsService restrictionsService = retrofit.create(RestrictionsService.class);
+
+        //Log.d("POSTALCODE2", gpsLocation.getmPostalCode());
+
+        // Se construye la llamada
+        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions("28032", "lR2I41RV8NhDuEkS51V8Z9NLJ");
+
+        // Se hace la llamada a la API
+        callAsync.enqueue(new Callback<List<RestrictionFeed>>()
         {
-            // Se construye el retrofit
-            Retrofit retrofit = new Retrofit
-                    .Builder()
-                    .baseUrl(URL_GPS)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            GPSService gpsService = retrofit.create(GPSService.class);
-
-            // Se construye la llamada
-            Call<GPSFeed> callAsync = gpsService.getAddress(mGpsLocation.getmLatitude(), mGpsLocation.getmLongitude());
-
-            // Se hace la llamada a la API
-            callAsync.enqueue(new Callback<GPSFeed>()
+            @Override
+            public void onResponse(@NonNull Call<List<RestrictionFeed>> call, @NonNull Response<List<RestrictionFeed>> response)
             {
-                @Override
-                public void onResponse(@NonNull Call<GPSFeed> call, @NonNull Response<GPSFeed> response)
+                if (response.isSuccessful())
                 {
-                    if (response.isSuccessful())
-                    {
-                        // La API responde correctamente
-                        Retrofit retrofit = new Retrofit
-                                .Builder()
-                                .baseUrl(URL_RES)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-                        RestrictionsService resService = retrofit.create(RestrictionsService.class);
+                    // La API responde correctamente
+                    assert response.body() != null;
 
-                        String postalCode = response.body().getmPostalCode();
-                        /*String city = response.body().getmCity();
+                    List<RestrictionsItems> list = response.body().get(0).getItems();
+                    list.addAll(response.body().get(1).getItems());
 
-                        // TODO Añadir el resto de ciudades de España
-                        if (city.equals("Rivas Vaciamadrid") || city.equalsIgnoreCase("Piñuecar Gandullas"))
-                        {
-                            city = response.body().getmCity().replace(" ", "-");
-                        } else {
-                            city = response.body().getmCity().replace(" ", "+");
-                        }
-
-                        // TODO Consultar otra API que no limite a 500 la llamada o pagar por ella
-                        // Se construye la llamada (OJO: En Android Studio se falsean las coordenas)
-                        //Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(city, "lR2I41RV8NhDuEkS51V8Z9NLJ");
-                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions("madrid", "lR2I41RV8NhDuEkS51V8Z9NLJ");*/
-                        Call<List<RestrictionFeed>> callAsync = resService.getRestrictions(postalCode, "lR2I41RV8NhDuEkS51V8Z9NLJ");
-
-                        // Se hace la llamada a la API
-                        callAsync.enqueue(new Callback<List<RestrictionFeed>>()
-                        {
-                            @Override
-                            public void onResponse(@NonNull Call<List<RestrictionFeed>> call, @NonNull Response<List<RestrictionFeed>> response)
-                            {
-                                if (response.isSuccessful())
-                                {
-                                    assert response.body() != null;
-                                    mData.postValue(response.body().get(0).getItems());
-                                } else {
-                                    mData.postValue(null);
-                                }
-                            }
-                            @Override
-                            public void onFailure(@NonNull Call<List<RestrictionFeed>> call, @NonNull Throwable t)
-                            {
-                                mData.postValue(null);
-                            }
-                        });
-                    } else {
-                        mData.postValue(null);
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<GPSFeed> call, @NonNull Throwable t)
-                {
+                    mData.postValue(list);
+                } else {
                     mData.postValue(null);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<RestrictionFeed>> call, @NonNull Throwable t)
+            {
+                mData.postValue(null);
+            }
+        });
     }
 }

@@ -6,6 +6,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.example.appcovid.R;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Clase que maneja los permisos y localización GPS
@@ -35,10 +41,12 @@ public class GPSLocation extends Service implements LocationListener
     private boolean mCanGetLocation = false;
     private final Context mContext;
     private Location mLocation;
+    private String mPostalCode;
     private double mLatitude;
     private double mLongitude;
     protected LocationManager locationManager;
-
+    Geocoder geocoder;
+    List<Address> addresses;
 
     /**
      * Contructor de la clase
@@ -47,7 +55,7 @@ public class GPSLocation extends Service implements LocationListener
     public GPSLocation(Context mContext)
     {
         this.mContext = mContext;
-        this.mLocation = getmLocation();
+        this.mPostalCode = getmPostalCode();
     }
 
 
@@ -55,7 +63,7 @@ public class GPSLocation extends Service implements LocationListener
      * Método que devuelve la localización
      * @return mLocation
      */
-    private Location getmLocation()
+    public String getmPostalCode()
     {
         try
         {
@@ -90,45 +98,15 @@ public class GPSLocation extends Service implements LocationListener
             e.printStackTrace();
         }
 
-        return mLocation;
-    }
+        geocoder = new Geocoder(mContext, Locale.getDefault());
 
-
-    /**
-     * Método que devulve la longitud
-     * @return mLongitude
-     */
-    public double getmLongitude()
-    {
-        if (mLocation != null)
-        {
-            mLongitude = mLocation.getLongitude();
+        try {
+            addresses = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return mLongitude;
-    }
 
-
-    /**
-     * Método que devulve la latitud
-     * @return mLatitude
-     */
-    public double getmLatitude()
-    {
-        if (mLocation != null)
-        {
-            mLatitude = mLocation.getLatitude();
-        }
-        return mLatitude;
-    }
-
-
-    /**
-     * Método que comprueba si se puede obtener la localización
-     * @return mCanGetLocation
-     */
-    public boolean canGetLocation()
-    {
-        return this.mCanGetLocation;
+        return addresses.get(0).getPostalCode();
     }
 
 
@@ -151,22 +129,6 @@ public class GPSLocation extends Service implements LocationListener
         alertDialog.show();
     }
 
-
-    /**
-     * Método que para el escuchador
-     */
-    public void stopListener()
-    {
-        if (locationManager != null)
-        {
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
-                return;
-            }
-            locationManager.removeUpdates(GPSLocation.this);
-        }
-    }
 
     /**
      * @param intent i
