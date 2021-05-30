@@ -46,7 +46,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @see BaseActivity
  * @see FusedLocationProviderClient
  */
-public class RestrictionsActivity extends BaseActivity {
+public class RestrictionsActivity extends BaseActivity
+{
     private static final String URL_RES = "https://api.quecovid.es/restriction/";
     private static final int ALL_PERMISSIONS_RESULT = 101;
     private final List<Object> mPermissionsRejected = new ArrayList<>();
@@ -222,8 +223,11 @@ public class RestrictionsActivity extends BaseActivity {
                 {
                     // La API responde correctamente
                     assert response.body() != null;
-                    List<RestrictionsItems> listRestrictions = response.body().get(0).getItems();
-                    listRestrictions.addAll(response.body().get(1).getItems());
+                    List<RestrictionsItems> listRestrictions = new ArrayList<>();
+
+                    for (RestrictionFeed restrictions : response.body()) {
+                        listRestrictions.addAll(restrictions.getItems());
+                    }
 
                     mAdapter = new RestrictionsAdapter(RestrictionsActivity.this, R.layout.element_restrictions, listRestrictions);
 
