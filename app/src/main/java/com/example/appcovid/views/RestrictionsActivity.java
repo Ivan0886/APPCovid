@@ -1,29 +1,23 @@
-// TODO Mirar por que no va
 package com.example.appcovid.views;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.renderscript.RenderScript;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.RestrictionsAdapter;
 import com.example.appcovid.controller.RestrictionsService;
-import com.example.appcovid.controller.RestrictionsViewModel;
 import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.RestrictionFeed;
 import com.example.appcovid.model.RestrictionsItems;
@@ -44,36 +38,31 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Clase que contiene RestrictionsViewModel
+ * Clase que muestra las restricciones de la zona
  * @author Iván Moriche Damas
  * @author Rodrigo Garcia
  * @author Iustin Mocanu
  * @version 28/05/2021/A
  * @see BaseActivity
- * @see RestrictionsViewModel
+ * @see FusedLocationProviderClient
  */
 public class RestrictionsActivity extends BaseActivity {
     private static final String URL_RES = "https://api.quecovid.es/restriction/";
     private static final int ALL_PERMISSIONS_RESULT = 101;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
     private final List<Object> mPermissionsRejected = new ArrayList<>();
     private final List<Object> mPermissions = new ArrayList<>();
     private List<Object> mPermissionsToRequest;
     private RestrictionsAdapter mAdapter;
     private ListView mListView;
-    private boolean gps_enable = false;
-    private boolean network_enable = false;
-    public LocationListener locationListener = new MyLocationListener();
     public LocationManager locationManager;
     List<Address> addresses;
-    private Location location;
-    private FusedLocationProviderClient fusedLocationProviderClient;
 
     /**
-     * Método que se ejecuta al arrancar la actividad. Se construye el RecylerView y se consultan los permisos
+     * Método que se ejecuta al arrancar la actividad. Se consultan los permisos
+     * y la localización del usuario
      * @param savedInstanceState instancia de la actividad
      */
+    @SuppressLint("VisibleForTests")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,190 +86,39 @@ public class RestrictionsActivity extends BaseActivity {
             }
         }
 
-        fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
             return;
         }
+
         fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @Override
-            public boolean isCancellationRequested() {
+            public boolean isCancellationRequested()
+            {
                 return false;
             }
 
             @NonNull
             @Override
-            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener)
+            {
                 return null;
-            }
-        }).addOnSuccessListener(location1 -> {
-            Log.d("LOCATION", "onCreate: " + location1);
+            }}).addOnSuccessListener(location -> {
+                Geocoder geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
-            Geocoder geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
-
-            try {
-                addresses = geocoder.getFromLocation(location1.getLatitude(), location1.getLongitude(), 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("LOCATION", "onCreate: " + addresses);
-            loadData();
-        });
-        /*if(addresses != null) {
-            loadData();
-        } else {
-
-        }*/
-    }
-
-
-    class MyLocationListener implements LocationListener {
-        Geocoder geocoder;
-
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
-
-            try {
-                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            loadData();
-        }
-       @Override
-       public void onProviderEnabled(@NonNull String provider) {
-
-       }
-
-        @Override
-        public void onProviderDisabled(@NonNull String provider) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-    }
-
-    public void getMyLocation() {
-        try {
-            gps_enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ignored) {
-
-        }
-
-        try {
-            network_enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ignored) {
-
-        }
-
-        if (!gps_enable && !network_enable) {
-            launchAlert(R.string.error_title, R.string.error_text_service);
-        }
-
-        if (gps_enable) {
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
-            /*if(addresses == null) {
-            } else {
-                loadData();
-                Log.d("HOLA88", "pos eso");
-                //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
-            }*/
-
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
-
-        if (network_enable) {
-
-            /*if(addresses == null) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-            } else {
-                loadData();
-                Log.d("HOLA88", "pos eso");
-                //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
-            }*/
-
-            location = locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
-        }
-
-        getUserLocation();
-    }
-
-    private void getUserLocation() {
-        if (location == null) {
-            if (gps_enable) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+                try {
+                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                //locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-                //locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, Looper.myLooper());
-            }else if (network_enable) {
-                //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-                //locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, Looper.myLooper());
-            }else {
-                finish();
-            }
-        } else {
-            Geocoder gc = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
-            try {
-                addresses = gc.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            }catch(Exception e) {
-                e.printStackTrace();
-            }
-
-            loadData();
-        }
+                loadData();
+            });
     }
 
-    /*private boolean checkLocationPermission() {
-        int location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int location2 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        listPermission = new ArrayList<>();
-
-        if (location != PackageManager.PERMISSION_GRANTED) {
-            listPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
-        if (location2 != PackageManager.PERMISSION_GRANTED) {
-            listPermission.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-
-        if (!listPermission.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermission.toArray(new String[listPermission.size()]), 1);
-        }
-
-        return true;
-    }*/
 
     /**
      * Método que consulta los permisos de App
@@ -357,7 +195,12 @@ public class RestrictionsActivity extends BaseActivity {
         }
     }
 
-    private void loadData() {
+
+    /**
+     * Método que contruye y hace la llamada a la API. También se encarga de mostrar los datos en pantalla
+     */
+    private void loadData()
+    {
         // Se construye el retrofit
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -366,60 +209,35 @@ public class RestrictionsActivity extends BaseActivity {
                 .build();
         RestrictionsService restrictionsService = retrofit.create(RestrictionsService.class);
 
-        Log.d("LOCATION ", addresses.get(0).getPostalCode());
-
         // Se construye la llamada
         Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "Sq8YKs9N9G3d8W7QGcryGMoRc");
 
         // Se hace la llamada a la API
-        callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
+        callAsync.enqueue(new Callback<List<RestrictionFeed>>()
+        {
             @Override
-            public void onResponse(@NonNull Call<List<RestrictionFeed>> call, @NonNull Response<List<RestrictionFeed>> response) {
-                if (response.isSuccessful()) {
+            public void onResponse(@NonNull Call<List<RestrictionFeed>> call, @NonNull Response<List<RestrictionFeed>> response)
+            {
+                if (response.isSuccessful())
+                {
                     // La API responde correctamente
                     assert response.body() != null;
-
                     List<RestrictionsItems> listRestrictions = response.body().get(0).getItems();
                     listRestrictions.addAll(response.body().get(1).getItems());
 
                     mAdapter = new RestrictionsAdapter(RestrictionsActivity.this, R.layout.element_restrictions, listRestrictions);
 
                     mListView.setAdapter(mAdapter);
-
-                    Log.d("TITULO", listRestrictions.get(0).getmTitle());
-                    Log.d("TEXTO", listRestrictions.get(0).getmDescription());
-                    /*for(RestrictionsItems item : list) {
-
-
-                        Log.d("TITULO", item.getmTitle());
-                        Log.d("TEXTO", item.getmDescription());
-
-                        // inflate (create) another copy of our custom layout
-                        //LayoutInflater inflater = getLayoutInflater();
-                        //View myLayout = inflater.inflate(R.layout.element_restrictions, ll, false);
-
-                        //LinearLayout ll2 = myLayout.findViewById(R.id.restriction_layout);
-
-                        //TextView textView = new TextView(RestrictionsActivity.this);
-
-                        //TextView textView = ll2.findViewById(R.id.restriction_title);
-                        //TextView textView2 = ll2.findViewById(R.id.restriction_text);
-                        //textView.setText(item.getmTitle());
-                        //textView2.setText(item.getmDescription());
-                        //ll.addView(myLayout);
-                    }*/
-                    //mData.postValue(list);
                 } else {
-                    //mData.postValue(null);
+                    launchAlert(R.string.error_title, R.string.error_text);
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<RestrictionFeed>> call, @NonNull Throwable t) {
-                //mData.postValue(null);
+            public void onFailure(@NonNull Call<List<RestrictionFeed>> call, @NonNull Throwable t)
+            {
+                launchAlert(R.string.error_title, R.string.error_text);
             }
         });
     }
-
-
 }
