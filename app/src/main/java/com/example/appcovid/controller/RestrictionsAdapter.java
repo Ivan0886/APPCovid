@@ -39,6 +39,17 @@ public class RestrictionsAdapter extends ArrayAdapter<RestrictionsItems>
         this.mRestrictionsItems = objects;
     }
 
+    @Override
+    public int getCount() {
+        return mRestrictionsItems.size();
+    }
+
+    @Nullable
+    @Override
+    public RestrictionsItems getItem(int position) {
+        return mRestrictionsItems.get(position);
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

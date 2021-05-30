@@ -55,6 +55,8 @@ public class RestrictionsActivity extends BaseActivity {
     private ArrayList mPermissions = new ArrayList();
     private ArrayList mPermissionsToRequest;
     private RestrictionsViewModel mDataRestrictions;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
     private RestrictionsAdapter mAdapter;
     public LocationManager locationManager;
     public LocationListener locationListener = new MyLocationListener();
@@ -101,7 +103,7 @@ public class RestrictionsActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                loadData(addresses.get(0).getPostalCode());
+                loadData();
                 //Log.d("ADDRESS", "" + addresses);
             }
         }
@@ -136,11 +138,11 @@ public class RestrictionsActivity extends BaseActivity {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
         }
 
         if (network_enable) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
         }
     }
 
@@ -165,7 +167,7 @@ public class RestrictionsActivity extends BaseActivity {
         return true;
     }
 
-    private void loadData(String postalCode) {
+    private void loadData() {
         // Se construye el retrofit
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -177,7 +179,7 @@ public class RestrictionsActivity extends BaseActivity {
         //Log.d("POSTALCODE2", gpsLocation.getmPostalCode());
 
         // Se construye la llamada
-        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(postalCode, "lR2I41RV8NhDuEkS51V8Z9NLJ");
+        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
 
         // Se hace la llamada a la API
         callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
