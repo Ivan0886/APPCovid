@@ -15,6 +15,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.renderscript.RenderScript;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -25,6 +27,10 @@ import com.example.appcovid.controller.RestrictionsViewModel;
 import com.example.appcovid.model.BaseActivity;
 import com.example.appcovid.model.RestrictionFeed;
 import com.example.appcovid.model.RestrictionsItems;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.tasks.CancellationToken;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,8 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @see BaseActivity
  * @see RestrictionsViewModel
  */
-public class RestrictionsActivity extends BaseActivity
-{
+public class RestrictionsActivity extends BaseActivity {
     private static final String URL_RES = "https://api.quecovid.es/restriction/";
     private static final int ALL_PERMISSIONS_RESULT = 101;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
@@ -62,14 +67,15 @@ public class RestrictionsActivity extends BaseActivity
     public LocationListener locationListener = new MyLocationListener();
     public LocationManager locationManager;
     List<Address> addresses;
+    private Location location;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     /**
      * Método que se ejecuta al arrancar la actividad. Se construye el RecylerView y se consultan los permisos
      * @param savedInstanceState instancia de la actividad
      */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
@@ -83,18 +89,50 @@ public class RestrictionsActivity extends BaseActivity
 
         mPermissionsToRequest = findAnswerPermissions((ArrayList) mPermissions);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            if (mPermissionsToRequest.size() > 0)
-            {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mPermissionsToRequest.size() > 0) {
                 requestPermissions((String[]) mPermissionsToRequest.toArray(
                         new String[mPermissionsToRequest.size()]),
                         ALL_PERMISSIONS_RESULT);
             }
         }
 
-        getMyLocation();
+        fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
 
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+        }).addOnSuccessListener(location1 -> {
+            Log.d("LOCATION", "onCreate: " + location1);
+
+            Geocoder geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
+
+            try {
+                addresses = geocoder.getFromLocation(location1.getLatitude(), location1.getLongitude(), 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("LOCATION", "onCreate: " + addresses);
+            loadData();
+        });
         /*if(addresses != null) {
             loadData();
         } else {
@@ -108,7 +146,6 @@ public class RestrictionsActivity extends BaseActivity
 
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            //locationManager.removeUpdates(locationListener);
             geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
             try {
@@ -116,9 +153,21 @@ public class RestrictionsActivity extends BaseActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.d("HOLA89", "pos eso");
             loadData();
-            //Log.d("ADDRESS", "" + addresses);
+        }
+       @Override
+       public void onProviderEnabled(@NonNull String provider) {
+
+       }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
         }
     }
 
@@ -152,25 +201,63 @@ public class RestrictionsActivity extends BaseActivity
                 return;
             }
             //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
-            if(addresses == null) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            /*if(addresses == null) {
             } else {
                 loadData();
                 Log.d("HOLA88", "pos eso");
                 //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
-            }
+            }*/
 
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
         if (network_enable) {
-            //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
-            if(addresses == null) {
+
+            /*if(addresses == null) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
             } else {
                 loadData();
                 Log.d("HOLA88", "pos eso");
                 //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
+            }*/
+
+            location = locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
+        }
+
+        getUserLocation();
+    }
+
+    private void getUserLocation() {
+        if (location == null) {
+            if (gps_enable) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                //locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+                //locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, Looper.myLooper());
+            }else if (network_enable) {
+                //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+                //locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, Looper.myLooper());
+            }else {
+                finish();
             }
+        } else {
+            Geocoder gc = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
+
+            try {
+                addresses = gc.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+
+            loadData();
         }
     }
 
@@ -279,10 +366,10 @@ public class RestrictionsActivity extends BaseActivity
                 .build();
         RestrictionsService restrictionsService = retrofit.create(RestrictionsService.class);
 
-        //Log.d("POSTALCODE2", gpsLocation.getmPostalCode());
+        Log.d("LOCATION ", addresses.get(0).getPostalCode());
 
         // Se construye la llamada
-        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "lR2I41RV8NhDuEkS51V8Z9NLJ");
+        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "Sq8YKs9N9G3d8W7QGcryGMoRc");
 
         // Se hace la llamada a la API
         callAsync.enqueue(new Callback<List<RestrictionFeed>>() {
