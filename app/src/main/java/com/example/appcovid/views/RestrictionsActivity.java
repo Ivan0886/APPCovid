@@ -3,9 +3,9 @@ package com.example.appcovid.views;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -13,13 +13,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.appcovid.R;
 import com.example.appcovid.controller.RestrictionsAdapter;
@@ -44,46 +41,65 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Clase que contiene RestrictionsViewModel
  * @author Iván Moriche Damas
  * @author Rodrigo Garcia
- * @author: Iustin Mocanu
- * @version: 28/05/2021/A
+ * @author Iustin Mocanu
+ * @version 28/05/2021/A
  * @see BaseActivity
  * @see RestrictionsViewModel
  */
-public class RestrictionsActivity extends BaseActivity {
-    private final static int ALL_PERMISSIONS_RESULT = 101;
-    private ArrayList mPermissionsRejected = new ArrayList();
-    private ArrayList mPermissions = new ArrayList();
-    private ArrayList mPermissionsToRequest;
-    private RestrictionsViewModel mDataRestrictions;
+public class RestrictionsActivity extends BaseActivity
+{
+    private static final String URL_RES = "https://api.quecovid.es/restriction/";
+    private static final int ALL_PERMISSIONS_RESULT = 101;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
+    private final List<Object> mPermissionsRejected = new ArrayList<>();
+    private final List<Object> mPermissions = new ArrayList<>();
+    private List<Object> mPermissionsToRequest;
     private RestrictionsAdapter mAdapter;
-    public LocationManager locationManager;
-    public LocationListener locationListener = new MyLocationListener();
-    private static final String URL_RES = "https://api.quecovid.es/restriction/";
+    private ListView mListView;
     private boolean gps_enable = false;
     private boolean network_enable = false;
-    private ListView mListView;
+    public LocationListener locationListener = new MyLocationListener();
+    public LocationManager locationManager;
     List<Address> addresses;
 
     /**
      * Método que se ejecuta al arrancar la actividad. Se construye el RecylerView y se consultan los permisos
-     *
-     * @param savedInstanceState
+     * @param savedInstanceState instancia de la actividad
      */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
-        // get a reference to the already created main layout
+        // Referencia del ListView que hay en el layout
         mListView = findViewById(R.id.list_restrictions);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
+        mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        mPermissionsToRequest = findAnswerPermissions((ArrayList) mPermissions);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (mPermissionsToRequest.size() > 0)
+            {
+                requestPermissions((String[]) mPermissionsToRequest.toArray(
+                        new String[mPermissionsToRequest.size()]),
+                        ALL_PERMISSIONS_RESULT);
+            }
+        }
+
         getMyLocation();
 
-        checkLocationPermission();
+        /*if(addresses != null) {
+            loadData();
+        } else {
+
+        }*/
     }
 
 
@@ -92,33 +108,30 @@ public class RestrictionsActivity extends BaseActivity {
 
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            if (location != null) {
-                locationManager.removeUpdates(locationListener);
+            //locationManager.removeUpdates(locationListener);
+            geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
-                geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
-
-                try {
-                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                loadData();
-                //Log.d("ADDRESS", "" + addresses);
+            try {
+                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            Log.d("HOLA89", "pos eso");
+            loadData();
+            //Log.d("ADDRESS", "" + addresses);
         }
     }
 
     public void getMyLocation() {
         try {
             gps_enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
 
         try {
             network_enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
 
@@ -138,19 +151,34 @@ public class RestrictionsActivity extends BaseActivity {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
+            if(addresses == null) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            } else {
+                loadData();
+                Log.d("HOLA88", "pos eso");
+                //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)));
+            }
+
         }
 
         if (network_enable) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
+            if(addresses == null) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            } else {
+                loadData();
+                Log.d("HOLA88", "pos eso");
+                //locationManager.getLastKnownLocation(String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)));
+            }
         }
     }
 
-    private boolean checkLocationPermission() {
+    /*private boolean checkLocationPermission() {
         int location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int location2 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        List<String> listPermission = new ArrayList<>();
+        listPermission = new ArrayList<>();
 
         if (location != PackageManager.PERMISSION_GRANTED) {
             listPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -165,6 +193,81 @@ public class RestrictionsActivity extends BaseActivity {
         }
 
         return true;
+    }*/
+
+    /**
+     * Método que consulta los permisos de App
+     * @param wanted listado de permisos
+     * @return result
+     */
+    private ArrayList<Object> findAnswerPermissions(ArrayList wanted)
+    {
+        ArrayList<Object> result = new ArrayList<>();
+
+        for (Object permission : wanted)
+        {
+            if (!youHavePermission((String)permission))
+            {
+                result.add(permission);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Método que comprueba si tienes permiso
+     * @param permission aceptación del permiso
+     * @return true
+     */
+    private boolean youHavePermission(String permission)
+    {
+        if (canMakeSmores())
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Método que comprueba la versión del dispositivo
+     * @return Build.Version
+     */
+    private boolean canMakeSmores()
+    {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+
+    /**
+     * Método que solicita los permisos de la App de distinta forma dependiendo de la versión del dispositivo
+     * @param requestCode codigo
+     * @param permisos array de permisos
+     * @param grantResults permisos aceptados
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permisos, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permisos, grantResults);
+        if (requestCode == ALL_PERMISSIONS_RESULT) {
+            for (Object permission : mPermissionsToRequest) {
+                if (!youHavePermission((String) permission)) {
+                    mPermissionsRejected.add(permission);
+                }
+            }
+        }
+
+        if (mPermissionsRejected.size() > 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0))) {
+                    finish();
+                }
+            }
+        }
     }
 
     private void loadData() {
