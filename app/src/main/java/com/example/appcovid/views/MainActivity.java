@@ -19,6 +19,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Clase que contiene la pantalla inicial de la App
  * @author Iván Moriche Damas
@@ -43,12 +45,19 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         Intent i = getIntent();
-        String mac = getMac().toUpperCase();
+        String mac = null;
+        try
+        {
+            mac = getMac().toUpperCase();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        String finalMac = mac;
 
         // Se comprueba que la App se arranca si esta muerta
         if (i.getStringExtra("ALERTACOVID") == null)
         {
-            getmRef().child(mac).child("CovidAlert").addValueEventListener(new ValueEventListener()
+            getmRef().child(finalMac).child("CovidAlert").addValueEventListener(new ValueEventListener()
             {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -59,14 +68,14 @@ public class MainActivity extends BaseActivity
                         launchNotification();
                     }
 
-                    getmRef().child(mac).child("CovidAlert").setValue(false);
+                    getmRef().child(finalMac).child("CovidAlert").setValue(false);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) { }
             });
         } else {
-            getmRef().child(mac).child("CovidAlert").setValue(false);
+            getmRef().child(finalMac).child("CovidAlert").setValue(false);
         }
     }
 
