@@ -20,10 +20,11 @@
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
-        <activity android:name=".views.RestrictionsActivity" />
+        <activity android:name=".views.RestrictionsActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".views.NewsActivity" />
         <activity android:name=".views.StateActivity" />
-        <activity android:name=".views.WebNewsActivity" />
+        <activity android:name=".views.WebNewsActivity" android:configChanges="orientation|screenSize" />
         <activity android:name=".views.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
