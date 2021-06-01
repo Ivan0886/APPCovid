@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -27,9 +26,6 @@ import com.example.appcovid.views.MainActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,22 +67,12 @@ public abstract class BaseActivity extends AppCompatActivity
 
                 new CountDownTimer(30000, 1000)
                 {
-                    public void onTick(long millisUntilFinished) {
-                        Log.d("onTick", "HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaa");
-                    }
+                    public void onTick(long millisUntilFinished) { }
 
                     public void onFinish()
                     {
-                        /*String deviceAddress = null;
-                        try
-                        {
-                            deviceAddress = md5Mac(device.getAddress());
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }*/
-
-                        // String finalDeviceAddress = deviceAddress;
                         String finalDeviceAddress = device.getAddress().toUpperCase();
+
                         mRef.child(finalDeviceAddress).get().addOnCompleteListener(task -> {
                             if (task.isSuccessful())
                             {
@@ -280,7 +266,6 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
-                // Mac = md5Mac(String.valueOf(inputMAC.getText()));
                 Mac = String.valueOf(inputMAC.getText()).toUpperCase();
             } else {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -313,9 +298,8 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Método que devuelve la dirección Mac de distinta forma dependiendo de la versión del dispositivo
      * @return Mac
-     * @throws NoSuchAlgorithmException excepción
      */
-    public String getMac() // throws NoSuchAlgorithmException
+    public String getMac()
     {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
         {
@@ -324,25 +308,8 @@ public abstract class BaseActivity extends AppCompatActivity
             Mac = "06:06:5A:43:40";
             //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
         }
-        // return md5Mac(Mac);
         return Mac.toUpperCase();
     }
-
-
-    /**
-     * Método que encripta la direcciones MAC para introducirlas en la BBDD
-     * @param mac dirección MAC
-     * @return hashmac.toString()
-     * @throws NoSuchAlgorithmException excepción
-     */
-    /*private static String md5Mac(String mac) throws NoSuchAlgorithmException
-    {
-        // La MAC se pasa a MD5
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] messageDigest = md.digest(mac.getBytes());
-        BigInteger hashmac = new BigInteger(1, messageDigest);
-        return hashmac.toString();
-    }*/
 
 
     /**
