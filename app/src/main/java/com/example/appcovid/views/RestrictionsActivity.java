@@ -71,21 +71,6 @@ public class RestrictionsActivity extends BaseActivity
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        mPermissionsToRequest = findAnswerPermissions((ArrayList) mPermissions);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            if (mPermissionsToRequest.size() > 0)
-            {
-                requestPermissions((String[]) mPermissionsToRequest.toArray(
-                        new String[mPermissionsToRequest.size()]),
-                        ALL_PERMISSIONS_RESULT);
-            }
-        }
-
         FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

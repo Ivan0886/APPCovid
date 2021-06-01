@@ -1,5 +1,6 @@
 package com.example.appcovid.model;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -49,14 +50,14 @@ public abstract class BaseActivity extends AppCompatActivity
     public static boolean isAppWentToBg = true;
     public static boolean isWindowFocused = false;
     public static boolean isBackPressed = false;
-    private static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
-    private final ArrayList<String> mList = new ArrayList<>();
-    private DatabaseReference mRef;
     protected static final int ALL_PERMISSIONS_RESULT = 101;
     protected final List<Object> mPermissionsRejected = new ArrayList<>();
     protected final List<Object> mPermissions = new ArrayList<>();
     protected List<Object> mPermissionsToRequest;
+    private static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
+    private final ArrayList<String> mList = new ArrayList<>();
+    private DatabaseReference mRef;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         public void onReceive(Context context, Intent intent)
@@ -118,6 +119,21 @@ public abstract class BaseActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
+        mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        mPermissionsToRequest = findAnswerPermissions((ArrayList) mPermissions);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (mPermissionsToRequest.size() > 0)
+            {
+                requestPermissions((String[]) mPermissionsToRequest.toArray(
+                        new String[mPermissionsToRequest.size()]),
+                        ALL_PERMISSIONS_RESULT);
+            }
+        }
 
         mRef = mDatabase.getReference();
     }
