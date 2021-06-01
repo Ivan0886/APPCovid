@@ -175,7 +175,16 @@ public abstract class BaseActivity extends AppCompatActivity
                         Mac = getMac();
                         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
                     } else {
-                        Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+                        String prefMac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+
+                        if (prefMac.contains(":"))
+                        {
+                            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("MAC").apply();
+                            Mac = getMac();
+                            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
+                        }else {
+                            Mac = prefMac;
+                        }
                     }
 
                     // Visibilidad de nuestro dispositivo
@@ -325,8 +334,8 @@ public abstract class BaseActivity extends AppCompatActivity
     {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
         {
-            Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
-            // Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+            // Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+            Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
             Mac = "06:06:5A:43:40";
             //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
