@@ -1,5 +1,6 @@
 package com.example.appcovid.model;
 
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,12 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +30,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase abstracta base de la App
@@ -48,6 +53,10 @@ public abstract class BaseActivity extends AppCompatActivity
     private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
     private final ArrayList<String> mList = new ArrayList<>();
     private DatabaseReference mRef;
+    protected static final int ALL_PERMISSIONS_RESULT = 101;
+    protected final List<Object> mPermissionsRejected = new ArrayList<>();
+    protected final List<Object> mPermissions = new ArrayList<>();
+    protected List<Object> mPermissionsToRequest;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         public void onReceive(Context context, Intent intent)
@@ -61,7 +70,9 @@ public abstract class BaseActivity extends AppCompatActivity
 
                 new CountDownTimer(30000, 1000)
                 {
-                    public void onTick(long millisUntilFinished) { }
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("onTick", "HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaa");
+                    }
 
                     public void onFinish()
                     {
@@ -230,6 +241,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * Método que lanza un alert distinto dependiendo de los parametros pasados
      * @param title título de la alerta
      * @param text texto de la alerta
+     * @deprecated startActivityForResult
      */
     protected void launchAlert(int title, int text)
     {
@@ -319,5 +331,88 @@ public abstract class BaseActivity extends AppCompatActivity
         byte[] messageDigest = md.digest(mac.getBytes());
         BigInteger hashmac = new BigInteger(1, messageDigest);
         return hashmac.toString();
+    }
+
+
+    /**
+     * Método que consulta los permisos de App
+     * @param wanted listado de permisos
+     * @return result
+     */
+    protected ArrayList<Object> findAnswerPermissions(ArrayList wanted)
+    {
+        ArrayList<Object> result = new ArrayList<>();
+
+        for (Object permission : wanted)
+        {
+            if (!youHavePermission((String)permission))
+            {
+                result.add(permission);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Método que comprueba si tienes permiso
+     * @param permission aceptación del permiso
+     * @return true
+     */
+    private boolean youHavePermission(String permission)
+    {
+        if (canMakeSmores())
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Método que comprueba la versión del dispositivo
+     * @return Build.Version
+     */
+    private boolean canMakeSmores()
+    {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+
+    /**
+     * Método que solicita los permisos de la App de distinta forma dependiendo de la versión del dispositivo
+     * @param requestCode codigo
+     * @param permissions array de permisos
+     * @param grantResults permisos aceptados
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == ALL_PERMISSIONS_RESULT)
+        {
+            for (Object permission : mPermissionsToRequest)
+            {
+                if (!youHavePermission((String) permission))
+                {
+                    mPermissionsRejected.add(permission);
+                }
+            }
+        }
+
+        if (mPermissionsRejected.size() > 0)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0)))
+                {
+                    finish();
+                }
+            }
+        }
     }
 }

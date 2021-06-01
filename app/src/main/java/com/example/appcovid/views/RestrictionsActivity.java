@@ -49,10 +49,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestrictionsActivity extends BaseActivity
 {
     private static final String URL_RES = "https://api.quecovid.es/restriction/";
-    private static final int ALL_PERMISSIONS_RESULT = 101;
-    private final List<Object> mPermissionsRejected = new ArrayList<>();
-    private final List<Object> mPermissions = new ArrayList<>();
-    private List<Object> mPermissionsToRequest;
     private RestrictionsAdapter mAdapter;
     private ListView mListView;
     public LocationManager locationManager;
@@ -123,89 +119,6 @@ public class RestrictionsActivity extends BaseActivity
 
                 loadData();
             });
-    }
-
-
-    /**
-     * Método que consulta los permisos de App
-     * @param wanted listado de permisos
-     * @return result
-     */
-    private ArrayList<Object> findAnswerPermissions(ArrayList wanted)
-    {
-        ArrayList<Object> result = new ArrayList<>();
-
-        for (Object permission : wanted)
-        {
-            if (!youHavePermission((String)permission))
-            {
-                result.add(permission);
-            }
-        }
-        return result;
-    }
-
-
-    /**
-     * Método que comprueba si tienes permiso
-     * @param permission aceptación del permiso
-     * @return true
-     */
-    private boolean youHavePermission(String permission)
-    {
-        if (canMakeSmores())
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
-            }
-        }
-        return true;
-    }
-
-
-    /**
-     * Método que comprueba la versión del dispositivo
-     * @return Build.Version
-     */
-    private boolean canMakeSmores()
-    {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
-    }
-
-
-    /**
-     * Método que solicita los permisos de la App de distinta forma dependiendo de la versión del dispositivo
-     * @param requestCode codigo
-     * @param permissions array de permisos
-     * @param grantResults permisos aceptados
-     */
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == ALL_PERMISSIONS_RESULT)
-        {
-            for (Object permission : mPermissionsToRequest)
-            {
-                if (!youHavePermission((String) permission))
-                {
-                    mPermissionsRejected.add(permission);
-                }
-            }
-        }
-
-        if (mPermissionsRejected.size() > 0)
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                if (shouldShowRequestPermissionRationale((String) mPermissionsRejected.get(0)))
-                {
-                    finish();
-                }
-            }
-        }
     }
 
 
