@@ -15,6 +15,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/ic_element_restrictions"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"

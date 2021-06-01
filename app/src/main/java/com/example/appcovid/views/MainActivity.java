@@ -19,7 +19,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -46,12 +45,19 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         Intent i = getIntent();
-        String mac = getMac();
+        String mac = null;
+        try
+        {
+            mac = getMac();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        String finalMac = mac;
 
         // Se comprueba que la App se arranca si esta muerta
         if (i.getStringExtra("ALERTACOVID") == null)
         {
-            getmRef().child(mac).child("CovidAlert").addValueEventListener(new ValueEventListener()
+            getmRef().child(finalMac).child("CovidAlert").addValueEventListener(new ValueEventListener()
             {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
@@ -62,14 +68,14 @@ public class MainActivity extends BaseActivity
                         launchNotification();
                     }
 
-                    getmRef().child(mac).child("CovidAlert").setValue(false);
+                    getmRef().child(finalMac).child("CovidAlert").setValue(false);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) { }
             });
         } else {
-            getmRef().child(mac).child("CovidAlert").setValue(false);
+            getmRef().child(finalMac).child("CovidAlert").setValue(false);
         }
     }
 
