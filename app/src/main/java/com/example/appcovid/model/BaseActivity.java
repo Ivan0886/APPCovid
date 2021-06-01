@@ -74,27 +74,30 @@ public abstract class BaseActivity extends AppCompatActivity
 
                     public void onFinish()
                     {
-                        String finalDeviceAddress = device.getAddress().toUpperCase();
+                        String deviceAddress = null;
+                        try
+                        {
+                            deviceAddress = md5Mac(device.getAddress());
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
 
+                        String finalDeviceAddress = deviceAddress;
                         mRef.child(finalDeviceAddress).get().addOnCompleteListener(task -> {
                             if (task.isSuccessful())
                             {
                                 if (task.getResult().getValue() != null)
                                 {
-                                    try
+                                    if (mList.contains(finalDeviceAddress))
                                     {
-                                        if (mList.contains(md5Mac(finalDeviceAddress)))
-                                        {
-                                            mRef.child(Mac).child(md5Mac(finalDeviceAddress)).setValue(device.getName());
-                                        } else {
-                                            mList.add(md5Mac(finalDeviceAddress));
-                                        }
-                                    } catch (NoSuchAlgorithmException e) {
-                                        e.printStackTrace();
+                                        mRef.child(Mac).child(finalDeviceAddress).setValue(device.getName());
+                                    } else {
+                                        mList.add(finalDeviceAddress);
                                     }
-                                    cancel();
                                 }
+                                cancel();
                             }
+
                         });
                     }
                 }.start();
@@ -322,7 +325,8 @@ public abstract class BaseActivity extends AppCompatActivity
     {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
         {
-            Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+            Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+            // Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
             Mac = "06:06:5A:43:40";
             //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
