@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -30,8 +29,6 @@ import com.example.appcovid.views.MainActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,13 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onStart()
     {
-        try
-        {
-            applicationWillEnterForeground();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
+        applicationWillEnterForeground();
         super.onStart();
     }
 
@@ -155,7 +146,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
      * @throws NoSuchAlgorithmException excepción
      */
-    private void applicationWillEnterForeground() throws NoSuchAlgorithmException {
+    private void applicationWillEnterForeground()
+    {
         if (isAppWentToBg)
         {
             isAppWentToBg = false;
