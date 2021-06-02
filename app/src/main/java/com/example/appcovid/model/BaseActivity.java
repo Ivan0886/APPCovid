@@ -45,7 +45,7 @@ import java.util.List;
 public abstract class BaseActivity extends AppCompatActivity
 {
     public static int REQUEST_BLUETOOTH = 1;
-    public static String Mac = null;
+    public static String Mac = "";
     public static boolean isAppWentToBg = true;
     public static boolean isWindowFocused = false;
     public static boolean isBackPressed = false;
@@ -82,7 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity
                                 {
                                     if (mList.contains(deviceAddress))
                                     {
-                                        mRef.child(Mac).child(deviceAddress).setValue(device.getName());
+                                        mRef.child(Mac.toUpperCase()).child(deviceAddress).setValue(device.getName());
                                     } else {
                                         mList.add(deviceAddress);
                                     }
@@ -143,7 +143,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     /**
      * Método que comprueba si la App está en primer plano.
-     * También se comprueba si el Bluetooth está desactivado y se activa nuesto dispositivo
+     * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
      */
     private void applicationWillEnterForeground()
     {
@@ -157,13 +157,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 {
                     launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBT);
                 } else {
-                    if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
-                    {
-                        Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
-                    } else {
-                        Mac = getMac();
-                        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
-                    }
+                    Mac = getMac();
 
                     // Visibilidad de nuestro dispositivo
                     Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -264,6 +258,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
         if (text == R.string.main_dialog_textMACInfo)
         {
+            titleView.setBackgroundColor(Color.parseColor("#FFFFBB33")); // Amarillo
             builder.setView(inputMAC);
         }
         builder.setCancelable(false);
@@ -275,7 +270,6 @@ public abstract class BaseActivity extends AppCompatActivity
                 dialog.dismiss();
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
-                titleView.setBackgroundColor(Color.parseColor(String.valueOf(R.color.yellow))); // Amarillo
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
                 Mac = String.valueOf(inputMAC.getText()).toUpperCase();
             } else {
@@ -316,15 +310,21 @@ public abstract class BaseActivity extends AppCompatActivity
     @SuppressLint("HardwareIds")
     public String getMac()
     {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+        if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
         {
-            Mac = mBluetoothAdapter.getAddress();
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+            Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
         } else {
-            Mac = "06:06:5A:43:40";
-            //Log.d("HOLA", "HHHHH");
-            //launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            {
+                Mac = mBluetoothAdapter.getAddress();
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
+            } else {
+                //Mac = "06:06:5A:43:40";
+                //Log.d("HOLA", "HHHHH");
+                launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
         }
         return Mac.toUpperCase();
     }
