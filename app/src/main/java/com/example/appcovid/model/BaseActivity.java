@@ -1,6 +1,7 @@
 package com.example.appcovid.model;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -170,21 +171,12 @@ public abstract class BaseActivity extends AppCompatActivity
                 {
                     launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBT);
                 } else {
-                    if (!PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
+                    if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
                     {
+                        Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+                    } else {
                         Mac = getMac();
                         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
-                    } else {
-                        String prefMac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
-
-                        if (prefMac.contains(":"))
-                        {
-                            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("MAC").apply();
-                            Mac = getMac();
-                            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
-                        }else {
-                            Mac = prefMac;
-                        }
                     }
 
                     // Visibilidad de nuestro dispositivo
@@ -330,11 +322,13 @@ public abstract class BaseActivity extends AppCompatActivity
      * @return Mac
      * @throws NoSuchAlgorithmException excepción
      */
+    @SuppressLint("HardwareIds")
     public String getMac() throws NoSuchAlgorithmException
     {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
         {
-            // Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
+            Mac = mBluetoothAdapter.getAddress();
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address");
         } else {
             Mac = "06:06:5A:43:40";
