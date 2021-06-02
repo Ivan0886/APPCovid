@@ -121,6 +121,8 @@ public abstract class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
+        Log.d("Hola1", "Hola");
+
         mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -137,6 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity
         }
 
         mRef = mDatabase.getReference();
+        Log.d("Hola4", "Hola");
     }
 
 
@@ -146,6 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onStart()
     {
+        Log.d("Hola3", "Hola");
         try
         {
             applicationWillEnterForeground();
@@ -162,7 +166,8 @@ public abstract class BaseActivity extends AppCompatActivity
      * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
      * @throws NoSuchAlgorithmException excepción
      */
-    private void applicationWillEnterForeground() throws NoSuchAlgorithmException {
+    private void applicationWillEnterForeground() throws NoSuchAlgorithmException
+    {
         if (isAppWentToBg)
         {
             isAppWentToBg = false;
@@ -335,17 +340,13 @@ public abstract class BaseActivity extends AppCompatActivity
         if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
         {
             Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
-            Log.d("MIMAC", Mac);
         } else {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             {
                 Mac = md5Mac(mBluetoothAdapter.getAddress().toUpperCase());
-                Log.d("HOLA2", "HHHHH");
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 Mac = md5Mac(android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
             } else {
-                //Mac = "06:06:5A:43:40";
-                Log.d("HOLA", "HHHHH");
                 launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
             }
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
@@ -443,7 +444,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * @return hashmac.toString()
      * @throws NoSuchAlgorithmException excepción
      */
-    private static String md5Mac(String mac) throws NoSuchAlgorithmException
+    protected static String md5Mac(String mac) throws NoSuchAlgorithmException
     {
         // La MAC se pasa a MD5
         MessageDigest md = MessageDigest.getInstance("MD5");

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -44,22 +45,25 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("Hola2", "Hola");
+
         Intent i = getIntent();
-        String mac = null;
-        try
+        if (Mac.equals(""))
         {
-            mac = getMac();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            try
+            {
+                Mac = (getMac().contains(":")) ? md5Mac(getMac()) : getMac();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
 
-        String macHash = mac;
-
-        if(!macHash.equals("")) {
+        if (!Mac.equals(""))
+        {
             // Se comprueba que la App se arranca si esta muerta
             if (i.getStringExtra("ALERTACOVID") == null)
             {
-                getmRef().child(macHash).child("CovidAlert").addValueEventListener(new ValueEventListener()
+                getmRef().child(Mac).child("CovidAlert").addValueEventListener(new ValueEventListener()
                 {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
@@ -70,14 +74,14 @@ public class MainActivity extends BaseActivity
                             launchNotification();
                         }
 
-                        getmRef().child(macHash).child("CovidAlert").setValue(false);
+                        getmRef().child(Mac).child("CovidAlert").setValue(false);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) { }
                 });
             } else {
-                getmRef().child(macHash).child("CovidAlert").setValue(false);
+                getmRef().child(Mac).child("CovidAlert").setValue(false);
             }
         }
     }
