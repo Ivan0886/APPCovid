@@ -5,20 +5,31 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.appcovid.R;
 import com.example.appcovid.model.BaseActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase que contiene el estado del usuario referente al COVID-19
@@ -34,6 +45,8 @@ public class StateActivity extends BaseActivity
     private SharedPreferences mPreferences;
     private DatabaseReference mRef;
     private OnCompleteListener <DataSnapshot> mListener;
+    private List<String> tokenList = new ArrayList<>();
+    int count;
 
     /**
      * Método que se ejecuta al arrancar la actividad. Se consulta el estado del botón y se desactiva/habilita si
@@ -49,7 +62,8 @@ public class StateActivity extends BaseActivity
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
         mButton = findViewById(R.id.button_covid);
         // Se comprueba si han pasado 14 dias
-        mButton.setEnabled(checkTimeConfirmationCovid());
+        // mButton.setEnabled(checkTimeConfirmationCovid());
+        count = 0;
     }
 
 
@@ -77,6 +91,8 @@ public class StateActivity extends BaseActivity
      */
     public void alertConfirmCovid(View v)
     {
+
+
         // Creación Title Alert
         TextView titleView = new TextView(getApplicationContext());
         titleView.setText(R.string.dialog_title_state);
@@ -94,7 +110,7 @@ public class StateActivity extends BaseActivity
             mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
             mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
 
-            mRef = getmRef().child(Mac);
+            /*mRef = getmRef().child(Mac);
             mListener = task -> {
                 if (task.isSuccessful())
                 {
@@ -109,6 +125,58 @@ public class StateActivity extends BaseActivity
                 }
             };
             mRef.get().addOnCompleteListener(mListener);
+            */
+            getmRef().child(Mac).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (DataSnapshot o :
+                                task.getResult().getChildren()) {
+                            if (!o.getKey().equals("FCM_token") ) {
+
+                                getmRef().orderByKey().equalTo(o.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            Log.d("HOLA", "onDataChange: " + snapshot.child(o.getKey()).child("FCM_token").getValue());
+                                            // TODO: Pasarle token al servidor
+                                            new Thread(){
+                                                @Override
+                                                public void run() {
+                                                    super.run();
+                                                    //TODO: Añadir dirección de servidor en remoto
+                                                    try {
+                                                        URL url = new URL("http://192.168.1.43:3000");
+                                                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                                                        connection.setDoOutput(true);
+                                                        connection.setChunkedStreamingMode(0);
+                                                        OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                                                        String s = (String) snapshot.child(o.getKey()).child("FCM_token").getValue();
+                                                        out.write(s.getBytes());
+                                                        out.flush();
+                                                        out.close();
+
+                                                        connection.disconnect();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }.start();
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.d("HOLA", "onCancelled: " + error.getDetails());
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                }
+            });
+
 
             dialog.dismiss();
 

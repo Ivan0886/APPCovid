@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,8 +27,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -171,6 +175,21 @@ public abstract class BaseActivity extends AppCompatActivity
                     registerReceiver(mReceiver, filter);
 
                     mBluetoothAdapter.startDiscovery();
+
+                    FirebaseMessaging.getInstance().getToken()
+                            .addOnCompleteListener(new OnCompleteListener<String>() {
+                                @Override
+                                public void onComplete(@NonNull Task<String> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                                        return;
+                                    }
+
+                                    // Get new FCM registration token
+                                    String token = task.getResult();
+                                    Log.d("FCM", "onComplete: " + token);
+                                    mRef.child(Mac).child("FCM_token").setValue(token);
+                                }});
                 }
             } else {
                 launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBTError);

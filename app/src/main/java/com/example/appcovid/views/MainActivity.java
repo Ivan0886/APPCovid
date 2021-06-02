@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent i = getIntent();
+        /*Intent i = getIntent();
         String mac = getMac();
 
         if(!mac.equals("")) {
@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity
             } else {
                 getmRef().child(mac).child("CovidAlert").setValue(false);
             }
-        }
+        }**/
     }
 
 
