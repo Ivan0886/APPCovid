@@ -78,24 +78,17 @@ public abstract class BaseActivity extends AppCompatActivity
 
                     public void onFinish()
                     {
-                        String deviceAddress = null;
-                        try
-                        {
-                            deviceAddress = md5Mac(device.getAddress().toUpperCase());
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }
-                        String deviceAddressHash = deviceAddress;
-                        mRef.child(deviceAddressHash).get().addOnCompleteListener(task -> {
+                        String deviceAddress = device.getAddress().toUpperCase();
+                        mRef.child(deviceAddress).get().addOnCompleteListener(task -> {
                             if (task.isSuccessful())
                             {
                                 if (task.getResult().getValue() != null)
                                 {
-                                    if (mList.contains(deviceAddressHash))
+                                    if (mList.contains(deviceAddress))
                                     {
-                                        mRef.child(Mac).child(deviceAddressHash).setValue(device.getName());
+                                        mRef.child(Mac.toUpperCase()).child(deviceAddress).setValue(device.getName());
                                     } else {
-                                        mList.add(deviceAddressHash);
+                                        mList.add(deviceAddress);
                                     }
                                 }
                                 cancel();
@@ -287,13 +280,8 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
-                try
-                {
-                    Mac = md5Mac(String.valueOf(inputMAC.getText()).toUpperCase());
-                    PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                Mac = String.valueOf(inputMAC.getText()).toUpperCase();
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
             } else {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBT, REQUEST_BLUETOOTH);
@@ -328,24 +316,22 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Método que devuelve la dirección Mac de distinta forma dependiendo de la versión del dispositivo
      * @return Mac
-     * @throws NoSuchAlgorithmException excepción
      */
     @SuppressLint("HardwareIds")
-    public String getMac() throws NoSuchAlgorithmException {
+    public String getMac()
+    {
         if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
         {
             Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
-            Log.d("MIMAC", Mac);
+
         } else {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             {
-                Mac = md5Mac(mBluetoothAdapter.getAddress().toUpperCase());
-                Log.d("HOLA2", "HHHHH");
+                Mac = mBluetoothAdapter.getAddress().toUpperCase();
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                Mac = md5Mac(android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
+                Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase();
             } else {
                 //Mac = "06:06:5A:43:40";
-                Log.d("HOLA", "HHHHH");
                 launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
             }
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
@@ -434,22 +420,5 @@ public abstract class BaseActivity extends AppCompatActivity
                 }
             }
         }
-    }
-
-
-    /**
-     * Método que encripta la direcciones MAC para introducirlas en la BBDD
-     * @param mac dirección MAC
-     * @return hashmac.toString()
-     * @throws NoSuchAlgorithmException excepción
-     */
-    private static String md5Mac(String mac) throws NoSuchAlgorithmException
-    {
-        // La MAC se pasa a MD5
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] messageDigest = md.digest(mac.toUpperCase().getBytes());
-        BigInteger hashmac = new BigInteger(1, messageDigest);
-
-        return hashmac.toString();
     }
 }

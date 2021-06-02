@@ -45,21 +45,13 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         Intent i = getIntent();
-        String mac = null;
-        try
-        {
-            mac = getMac();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        String mac = getMac();
 
-        String macHash = mac;
-
-        if(!macHash.equals("")) {
+        if(!mac.equals("")) {
             // Se comprueba que la App se arranca si esta muerta
             if (i.getStringExtra("ALERTACOVID") == null)
             {
-                getmRef().child(macHash).child("CovidAlert").addValueEventListener(new ValueEventListener()
+                getmRef().child(mac).child("CovidAlert").addValueEventListener(new ValueEventListener()
                 {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
@@ -70,14 +62,14 @@ public class MainActivity extends BaseActivity
                             launchNotification();
                         }
 
-                        getmRef().child(macHash).child("CovidAlert").setValue(false);
+                        getmRef().child(mac).child("CovidAlert").setValue(false);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) { }
                 });
             } else {
-                getmRef().child(macHash).child("CovidAlert").setValue(false);
+                getmRef().child(mac).child("CovidAlert").setValue(false);
             }
         }
     }
