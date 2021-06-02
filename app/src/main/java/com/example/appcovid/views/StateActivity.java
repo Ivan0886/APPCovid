@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.time.LocalDate;
 
 /**
- * Clase que ¿¿???
+ * Clase que contiene el estado del usuario referente al COVID-19
  * @author Iván Moriche Damas
  * @author Rodrigo Garcia
  * @author Iustin Mocanu

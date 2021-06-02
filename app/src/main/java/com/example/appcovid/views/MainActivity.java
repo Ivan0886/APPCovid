@@ -45,30 +45,40 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         Intent i = getIntent();
-        String mac = getMac();
-
-        // Se comprueba que la App se arranca si esta muerta
-        if (i.getStringExtra("ALERTACOVID") == null)
+        String mac = null;
+        try
         {
-            getmRef().child(mac).child("CovidAlert").addValueEventListener(new ValueEventListener()
+            mac = getMac();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        String macHash = mac;
+
+        if(!macHash.equals("")) {
+            // Se comprueba que la App se arranca si esta muerta
+            if (i.getStringExtra("ALERTACOVID") == null)
             {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot)
+                getmRef().child(macHash).child("CovidAlert").addValueEventListener(new ValueEventListener()
                 {
-                    if (snapshot.getValue(Boolean.class) != null && snapshot.getValue(Boolean.class))
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
-                        launchNotification();
+                        if (snapshot.getValue(Boolean.class) != null && snapshot.getValue(Boolean.class))
+                        {
+                            launchNotification();
+                        }
+
+                        getmRef().child(macHash).child("CovidAlert").setValue(false);
                     }
 
-                    getmRef().child(mac).child("CovidAlert").setValue(false);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) { }
-            });
-        } else {
-            getmRef().child(mac).child("CovidAlert").setValue(false);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            } else {
+                getmRef().child(macHash).child("CovidAlert").setValue(false);
+            }
         }
     }
 
