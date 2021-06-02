@@ -291,7 +291,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 dialog.dismiss();
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
-                titleView.setBackgroundColor(Color.parseColor("#FFFFBB33")); // Amarillo
+                titleView.setBackgroundColor(Color.parseColor(String.valueOf(R.color.yellow))); // Amarillo
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
                 try {
                     Mac = md5Mac(String.valueOf(inputMAC.getText()));
