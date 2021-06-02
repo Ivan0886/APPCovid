@@ -2,10 +2,12 @@ package com.example.appcovid.views;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -75,8 +77,16 @@ public class StateActivity extends BaseActivity
      */
     public void alertConfirmCovid(View v)
     {
+        // Creación Title Alert
+        TextView titleView = new TextView(getApplicationContext());
+        titleView.setText(R.string.dialog_title_state);
+        titleView.setPadding(20, 30, 20, 30);
+        titleView.setTextSize(20F);
+        titleView.setBackgroundColor(Color.RED); // Rojo
+        titleView.setTextColor(Color.WHITE);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_title_state);
+        builder.setCustomTitle(titleView);
         builder.setMessage(R.string.dialog_text_state);
         builder.setCancelable(false);
 
@@ -84,7 +94,7 @@ public class StateActivity extends BaseActivity
             mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
             mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
 
-            mRef = getmRef().child(Mac.toUpperCase());
+            mRef = getmRef().child(Mac);
             mListener = task -> {
                 if (task.isSuccessful())
                 {

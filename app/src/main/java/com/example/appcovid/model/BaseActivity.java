@@ -12,11 +12,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -263,13 +265,19 @@ public abstract class BaseActivity extends AppCompatActivity
      */
     protected void launchAlert(int title, int text)
     {
+        // Creación Title Alert
+        TextView titleView = new TextView(getApplicationContext());
+        titleView.setText(getString(title));
+        titleView.setPadding(20, 30, 20, 30);
+        titleView.setTextSize(20F);
+        titleView.setBackgroundColor(Color.RED); // Rojo
+        titleView.setTextColor(Color.WHITE);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         EditText inputMAC = new EditText(this);
         inputMAC.setHint(R.string.text_hint_inputMac);
 
-        builder.setTitle(getString(title));
-        builder.setMessage(getString(text));
         if (text == R.string.main_dialog_textMACInfo)
         {
             builder.setView(inputMAC);
@@ -283,6 +291,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 dialog.dismiss();
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
+                titleView.setBackgroundColor(Color.parseColor("#FFFFBB33")); // Amarillo
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
                 try {
                     Mac = md5Mac(String.valueOf(inputMAC.getText()));
@@ -300,6 +309,9 @@ public abstract class BaseActivity extends AppCompatActivity
         {
             builder.setNegativeButton(R.string.text_look_mac, (dialog, which) -> startActivity(new Intent(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS)));
         }
+
+        builder.setCustomTitle(titleView);
+        builder.setMessage(getString(text));
 
         Dialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
