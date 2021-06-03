@@ -123,9 +123,6 @@ public abstract class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
-        Log.d("MAC", android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
-        Log.d("MAC2", PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??"));
-
         mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -151,7 +148,8 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onStart()
     {
-        try {
+        try
+        {
             applicationWillEnterForeground();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -163,8 +161,10 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Método que comprueba si la App está en primer plano.
      * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
+     * @throws NoSuchAlgorithmException excepción
      */
-    private void applicationWillEnterForeground() throws NoSuchAlgorithmException {
+    private void applicationWillEnterForeground() throws NoSuchAlgorithmException
+    {
         if (isAppWentToBg)
         {
             isAppWentToBg = false;
@@ -345,9 +345,11 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Método que devuelve la dirección Mac de distinta forma dependiendo de la versión del dispositivo
      * @return Mac
+     * @throws NoSuchAlgorithmException excepción
      */
     @SuppressLint("HardwareIds")
-    public String getMac() throws NoSuchAlgorithmException {
+    public String getMac() throws NoSuchAlgorithmException
+    {
         if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
         {
             Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
@@ -453,6 +455,12 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Método que encripta la direcciones MAC para introducirlas en la BBDD
+     * @param mac dirección MAC
+     * @return hashmac.toString()
+     * @throws NoSuchAlgorithmException excepción
+     */
     private static String md5Mac(String mac) throws NoSuchAlgorithmException
     {
         // La MAC se pasa a MD5
