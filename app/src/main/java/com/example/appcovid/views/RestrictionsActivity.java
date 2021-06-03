@@ -118,6 +118,7 @@ public class RestrictionsActivity extends BaseActivity
                 .build();
         RestrictionsService restrictionsService = retrofit.create(RestrictionsService.class);
 
+
         // Se construye la llamada
         Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "Sq8YKs9N9G3d8W7QGcryGMoRc");
 

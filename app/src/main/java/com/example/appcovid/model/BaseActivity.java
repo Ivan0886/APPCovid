@@ -113,6 +113,9 @@ public abstract class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
+        Log.d("MAC", android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
+        Log.d("MAC2", PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??"));
+
         mPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         mPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -162,9 +165,12 @@ public abstract class BaseActivity extends AppCompatActivity
                     Mac = getMac();
 
                     // Visibilidad de nuestro dispositivo
-                    Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-                    startActivity(discoverableIntent);
+                    if(mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                    {
+                        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+                        startActivity(discoverableIntent);
+                    }
 
                     // Detetar dispositivos
                     IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
