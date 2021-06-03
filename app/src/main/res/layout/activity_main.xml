@@ -8,6 +8,16 @@
     tools:context=".views.MainActivity">
 
     <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="163dp"
+        android:layout_height="163dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_icon_covid_foreground" />
+
+    <ImageView
         android:id="@+id/imageView"
         android:layout_width="350dp"
         android:layout_height="110dp"

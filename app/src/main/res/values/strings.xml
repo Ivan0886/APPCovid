@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">APPCovid</string>
+    <string name="app_name">CovidRecord</string>
     <string name="button_covid">Tengo COVID-19</string>
     <string name="button_new">Leer noticia</string>
     <string name="dialog_text_state">Si confirmas que tienes COVID-19, se bloqueara el boton durante 14 dias</string>
