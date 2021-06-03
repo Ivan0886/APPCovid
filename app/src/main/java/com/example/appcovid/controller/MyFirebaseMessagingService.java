@@ -91,7 +91,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 getApplicationContext(),
                 NotificationChannel.DEFAULT_CHANNEL_ID);
 
-        builder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
+        builder.setSmallIcon(R.drawable.ic_stat_ic_icon_covid_foreground);
         builder.setContentTitle(Objects.requireNonNull(message.getNotification()).getTitle());
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message.getNotification().getBody()));
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
