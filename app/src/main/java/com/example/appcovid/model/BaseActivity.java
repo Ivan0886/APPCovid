@@ -309,7 +309,12 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
                 // TODO Hacer comprobaciones de longitud, etc en el texto introducido
-                Mac = String.valueOf(inputMAC.getText()).toUpperCase();
+                try
+                {
+                    Mac = md5Mac(inputMAC.getText().toString().toUpperCase());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
                 PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
             } else {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -357,18 +362,18 @@ public abstract class BaseActivity extends AppCompatActivity
         } else {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             {
-                Mac = mBluetoothAdapter.getAddress().toUpperCase();
+                Mac = md5Mac(mBluetoothAdapter.getAddress().toUpperCase());
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                Mac = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase();
+                Mac = md5Mac(android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
             } else {
                 //Mac = "06:06:5A:43:40";
                 launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
             }
 
 
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", md5Mac(Mac)).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
         }
-        return md5Mac(Mac);
+        return Mac;
     }
 
 
