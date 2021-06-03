@@ -373,7 +373,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
         }
-        return Mac;
+        return Mac.contains(":") ? md5Mac(Mac) : Mac;
     }
 
 
