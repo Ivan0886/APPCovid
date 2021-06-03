@@ -128,7 +128,7 @@ public class StateActivity extends BaseActivity
                                                     super.run();
                                                     try
                                                     {
-                                                        URL url = new URL("http://192.168.1.43:3000");
+                                                        URL url = new URL("http://35.195.162.3:3000");
                                                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                                                         connection.setDoOutput(true);
