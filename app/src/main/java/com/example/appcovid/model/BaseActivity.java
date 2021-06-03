@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity
     private static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
     private final ArrayList<String> mList = new ArrayList<>();
-    private DatabaseReference mRef;
+    public DatabaseReference mRef;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         public void onReceive(Context context, Intent intent)
@@ -75,7 +76,9 @@ public abstract class BaseActivity extends AppCompatActivity
 
                 new CountDownTimer(30000, 1000)
                 {
-                    public void onTick(long millisUntilFinished) { }
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("MAC", "onTick: " + device.getAddress() + " " + device.getName());
+                    }
 
                     public void onFinish()
                     {
@@ -196,6 +199,8 @@ public abstract class BaseActivity extends AppCompatActivity
             }
         }
     }
+
+
 
 
     /**
@@ -323,6 +328,14 @@ public abstract class BaseActivity extends AppCompatActivity
         return mRef;
     }
 
+    /**
+     * Método que devuelve el enlace a la BBDD
+     * @return mDatabase
+     */
+
+    public static FirebaseDatabase getmDatabase() {
+        return mDatabase;
+    }
 
     /**
      * Método que devuelve la dirección Mac de distinta forma dependiendo de la versión del dispositivo
