@@ -36,7 +36,7 @@ public class NewsViewModel extends ViewModel
      */
     public LiveData<List<RssItem>> getmData()
     {
-        if(mData == null)
+        if (mData == null)
         {
             mData = new MutableLiveData<>();
             mData.setValue(new ArrayList<>());

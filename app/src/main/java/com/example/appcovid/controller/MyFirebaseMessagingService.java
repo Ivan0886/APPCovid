@@ -16,12 +16,10 @@
 
 package com.example.appcovid.controller;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -29,48 +27,55 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.appcovid.R;
-import com.example.appcovid.views.MainActivity;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.appcovid.model.BaseActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-/**
- * NOTA: Solo puede haber un servicio en cada aplicación que reciba mensajes FCM. Si es múltiple
- * se declaran en el Manifest, luego se elegirá el primero.
- *
- * Para que esta muestra de Java sea funcional, debe eliminar lo siguiente de la mensajería de Kotlin
- * servicio en el AndroidManifest.xml:
- *
- * <intent-filter>
- *   <action android:name="com.google.firebase.MESSAGING_EVENT" />
- * </intent-filter>
- */
+import java.util.Objects;
 
 /**
- * Clase que gestiona las notificaciones provenientes del servidor
+ * Clase que gestiona las notificaciones en primer plano provenientes del servidor
  * @author Iván Moriche Damas
  * @author Rodrigo Garcia
  * @author Iustin Mocanu
- * @version 28/05/2021/A
+ * @version 03/06/2021/A
  * @see FirebaseMessagingService
  */
-import com.example.appcovid.model.BaseActivity;
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
-
+public class MyFirebaseMessagingService extends FirebaseMessagingService
+{
+    /**
+     * Método que lanza una notificación cuando se recibe mensaje desde el servidor
+     * @param remoteMessage mensaje
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-
-        if (remoteMessage.getNotification() != null) {
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage)
+    {
+        if (remoteMessage.getNotification() != null)
+        {
             launchNotification(remoteMessage);
         }
     }
 
+    /**
+     * Método que actualiza el token de registro si se da alguno de los siguientes casos:
+     * 1 - La app se restablece en un dispositivo nuevo.
+     * 2 - El usuario desinstala y vuelve a instalar la app.
+     * 3 - El usuario borra los datos de la app.
+     * @param token token
+     */
     @Override
-    public void onNewToken(String token) {
-        BaseActivity.getmDatabase().getReference().child(BaseActivity.Mac).child("FCM_token").setValue(token);
-        Log.d("TOKEN", "Refreshed token: " + token);
+    public void onNewToken(@NonNull String token)
+    {
+        BaseActivity.getmRef().child(BaseActivity.Mac).child("FCM_token").setValue(token);
     }
 
+
+    /**
+     * Método que lanza la notificación
+     * @param message mensaje
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void launchNotification(RemoteMessage message)
     {
         Intent intent = new Intent();
@@ -87,7 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationChannel.DEFAULT_CHANNEL_ID);
 
         builder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark);
-        builder.setContentTitle(message.getNotification().getTitle());
+        builder.setContentTitle(Objects.requireNonNull(message.getNotification()).getTitle());
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message.getNotification().getBody()));
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setContentIntent(pendingIntent);
@@ -96,7 +101,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         notificationManager.notify(1, builder.build());
     }
-
 }
-
-

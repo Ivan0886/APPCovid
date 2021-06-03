@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedOutputStream;
@@ -28,8 +26,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Clase que contiene el estado del usuario referente al COVID-19
@@ -43,10 +39,6 @@ public class StateActivity extends BaseActivity
 {
     private Button mButton;
     private SharedPreferences mPreferences;
-    private DatabaseReference mRef;
-    private OnCompleteListener <DataSnapshot> mListener;
-    private List<String> tokenList = new ArrayList<>();
-    int count;
 
     /**
      * Método que se ejecuta al arrancar la actividad. Se consulta el estado del botón y se desactiva/habilita si
@@ -62,8 +54,7 @@ public class StateActivity extends BaseActivity
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
         mButton = findViewById(R.id.button_covid);
         // Se comprueba si han pasado 14 dias
-        // mButton.setEnabled(checkTimeConfirmationCovid());
-        count = 0;
+        mButton.setEnabled(checkTimeConfirmationCovid());
     }
 
 
@@ -86,13 +77,13 @@ public class StateActivity extends BaseActivity
 
     /**
      * Método que lanza un alert para confirmar el positivo de COVID-19 e
-     * inhabilita el botón en el caso de que el usuario pulse SI
+     * inhabilita el botón en el caso de que el usuario pulse SI. También se
+     * encarga de mandar los TOKENS de los dispositivos asociados al servidor
+     * para que este mande las notificaciones
      * @param v vista
      */
     public void alertConfirmCovid(View v)
     {
-
-
         // Creación Title Alert
         TextView titleView = new TextView(getApplicationContext());
         titleView.setText(R.string.dialog_title_state);
@@ -110,42 +101,33 @@ public class StateActivity extends BaseActivity
             mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
             mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
 
-            /*mRef = getmRef().child(Mac);
-            mListener = task -> {
-                if (task.isSuccessful())
-                {
-                    for (DataSnapshot o : task.getResult().getChildren())
-                    {
-                        if (!o.getKey().equals("CovidAlert"))
-                        {
-                            getmRef().child(o.getKey()).child("CovidAlert").setValue(true);
-                        }
-                    }
-
-                }
-            };
-            mRef.get().addOnCompleteListener(mListener);
-            */
             getmRef().child(Mac).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (DataSnapshot o :
-                                task.getResult().getChildren()) {
-                            if (!o.getKey().equals("FCM_token") ) {
-
-                                getmRef().orderByKey().equalTo(o.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                public void onComplete(@NonNull Task<DataSnapshot> task)
+                {
+                    if (task.isSuccessful())
+                    {
+                        for (DataSnapshot o : task.getResult().getChildren())
+                        {
+                            if (!o.getKey().equals("FCM_token") )
+                            {
+                                getmRef().orderByKey().equalTo(o.getKey()).addListenerForSingleValueEvent(new ValueEventListener()
+                                {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if (snapshot.exists()) {
-                                            Log.d("HOLA", "onDataChange: " + snapshot.child(o.getKey()).child("FCM_token").getValue());
-                                            // TODO: Pasarle token al servidor
-                                            new Thread(){
+                                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                                    {
+                                        /* Se comprueba si existe el token en la BBDD. En caso de que exista,
+                                        se le manda la notificación creando un hilo nuevo */
+                                        if (snapshot.exists())
+                                        {
+                                            new Thread()
+                                            {
                                                 @Override
-                                                public void run() {
+                                                public void run()
+                                                {
                                                     super.run();
-                                                    //TODO: Añadir dirección de servidor en remoto
-                                                    try {
+                                                    try
+                                                    {
                                                         URL url = new URL("http://192.168.1.43:3000");
                                                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -153,6 +135,7 @@ public class StateActivity extends BaseActivity
                                                         connection.setChunkedStreamingMode(0);
                                                         OutputStream out = new BufferedOutputStream(connection.getOutputStream());
                                                         String s = (String) snapshot.child(o.getKey()).child("FCM_token").getValue();
+                                                        assert s != null;
                                                         out.write(s.getBytes());
                                                         out.flush();
                                                         out.close();
@@ -166,20 +149,18 @@ public class StateActivity extends BaseActivity
                                         }
                                     }
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.d("HOLA", "onCancelled: " + error.getDetails());
+                                    public void onCancelled(@NonNull DatabaseError error)
+                                    {
+                                        Toast.makeText(getApplicationContext(), "ERROR" + error.getDetails(), Toast.LENGTH_LONG).show();
                                     }
                                 });
-
                             }
                         }
                     }
                 }
             });
 
-
             dialog.dismiss();
-
             showToast();
         });
 

@@ -21,20 +21,17 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity
     private static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
     private final ArrayList<String> mList = new ArrayList<>();
-    public DatabaseReference mRef;
+    private static DatabaseReference mRef;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         public void onReceive(Context context, Intent intent)
@@ -76,9 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
                 new CountDownTimer(30000, 1000)
                 {
-                    public void onTick(long millisUntilFinished) {
-                        Log.d("MAC", "onTick: " + device.getAddress() + " " + device.getName());
-                    }
+                    public void onTick(long millisUntilFinished) { }
 
                     public void onFinish()
                     {
@@ -90,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity
                                 {
                                     if (mList.contains(deviceAddress))
                                     {
-                                        mRef.child(Mac.toUpperCase()).child(deviceAddress).setValue(device.getName());
+                                        mRef.child(Mac.toUpperCase()).child(deviceAddress).setValue(LocalDate.now().toString());
                                     } else {
                                         mList.add(deviceAddress);
                                     }
@@ -151,7 +146,6 @@ public abstract class BaseActivity extends AppCompatActivity
     /**
      * Método que comprueba si la App está en primer plano.
      * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
-     * @throws NoSuchAlgorithmException excepción
      */
     private void applicationWillEnterForeground()
     {
@@ -180,19 +174,18 @@ public abstract class BaseActivity extends AppCompatActivity
                     mBluetoothAdapter.startDiscovery();
 
                     FirebaseMessaging.getInstance().getToken()
-                            .addOnCompleteListener(new OnCompleteListener<String>() {
-                                @Override
-                                public void onComplete(@NonNull Task<String> task) {
-                                    if (!task.isSuccessful()) {
-                                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                                        return;
-                                    }
+                            .addOnCompleteListener(task -> {
+                                if (!task.isSuccessful())
+                                {
+                                    Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
 
-                                    // Get new FCM registration token
-                                    String token = task.getResult();
-                                    Log.d("FCM", "onComplete: " + token);
-                                    mRef.child(Mac).child("FCM_token").setValue(token);
-                                }});
+                                // Get new FCM registration token
+                                String token = task.getResult();
+                                Log.d("FCM", "onComplete: " + token);
+                                mRef.child(Mac).child("FCM_token").setValue(token);
+                            });
                 }
             } else {
                 launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBTError);
@@ -323,19 +316,11 @@ public abstract class BaseActivity extends AppCompatActivity
      * Método que devuelve la referencia a la BBDD
      * @return mRef
      */
-    public DatabaseReference getmRef()
+    public static DatabaseReference getmRef()
     {
         return mRef;
     }
 
-    /**
-     * Método que devuelve el enlace a la BBDD
-     * @return mDatabase
-     */
-
-    public static FirebaseDatabase getmDatabase() {
-        return mDatabase;
-    }
 
     /**
      * Método que devuelve la dirección Mac de distinta forma dependiendo de la versión del dispositivo
