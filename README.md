@@ -1,6 +1,6 @@
 # CovidRecord
 
-<img src="doc/main_menu.png">
+![Menú principal](/doc/main_menu.png)
 
 **Proyecto de Android** para el Grado Superior de Desarrollo de Aplicaciones Multiplataforma (DAM)
 
