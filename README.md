@@ -1,4 +1,4 @@
-# CovidRecord
+# ![CovidRecord](/app/src/main/res/drawable/ic_title_app.png)
 
 | ![Menú principal](/doc/main_menu.png) | ![Noticias](/doc/news_menu.png) | ![Restricciones](/doc/restrictions_menu.png)
 | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
