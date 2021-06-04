@@ -315,7 +315,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
+                //PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
             } else {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBT, REQUEST_BLUETOOTH);
@@ -355,7 +355,8 @@ public abstract class BaseActivity extends AppCompatActivity
     @SuppressLint("HardwareIds")
     public String getMac() throws NoSuchAlgorithmException
     {
-        if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC"))
+        if (PreferenceManager.getDefaultSharedPreferences(this).contains("MAC") &&
+                !PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??").equals(""))
         {
             Mac = PreferenceManager.getDefaultSharedPreferences(this).getString("MAC", "??");
 
@@ -369,7 +370,6 @@ public abstract class BaseActivity extends AppCompatActivity
                 //Mac = "06:06:5A:43:40";
                 launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
             }
-
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
         }
