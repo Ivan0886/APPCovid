@@ -64,6 +64,8 @@ public class RestrictionsActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
+        pContext = RestrictionsActivity.this;
+
         // Referencia del ListView que hay en el layout
         mListView = findViewById(R.id.list_restrictions);
 

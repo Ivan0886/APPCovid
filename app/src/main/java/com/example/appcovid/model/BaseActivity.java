@@ -50,6 +50,7 @@ import java.util.List;
  */
 public abstract class BaseActivity extends AppCompatActivity
 {
+    @SuppressLint("StaticFieldLeak") public static Context pContext;
     public static int REQUEST_BLUETOOTH = 1;
     public static String Mac = "";
     public static boolean isAppWentToBg = true;
@@ -282,7 +283,7 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void launchAlert(int title, int text)
     {
         // Creación Title Alert
-        TextView titleView = new TextView(getApplicationContext());
+        TextView titleView = new TextView(pContext);
         titleView.setText(getString(title));
         titleView.setPadding(20, 30, 20, 30);
         titleView.setTextSize(20F);

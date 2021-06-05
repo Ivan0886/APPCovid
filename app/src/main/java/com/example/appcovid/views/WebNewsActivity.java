@@ -40,6 +40,8 @@ public class WebNewsActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_news);
 
+        pContext = WebNewsActivity.this;
+
         Intent intent = getIntent();
 
         mWebNews = findViewById(R.id.webNews);

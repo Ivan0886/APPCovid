@@ -38,6 +38,8 @@ public class NewsActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
+        pContext = NewsActivity.this;
+
         // Se construye el RecyclerView
         RecyclerView recyclerView = findViewById(R.id.list_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

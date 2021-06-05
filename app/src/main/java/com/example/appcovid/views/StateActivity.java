@@ -51,6 +51,8 @@ public class StateActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
 
+        pContext = StateActivity.this;
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
         mButton = findViewById(R.id.button_covid);
         // Se comprueba si han pasado 14 dias
