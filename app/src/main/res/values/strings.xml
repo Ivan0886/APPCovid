@@ -14,7 +14,7 @@
         usuarios cercanos. <br/>
         La sección de noticias hace uso de la feed de RSS de RTVE. <br/>
         La sección de restricciones hace uso de los servicios de Google para conseguir
-        la localización del usuario, la API de Geocode.xyz para conseguir el código postal del mismo
+        la localización del usuario, la API de Geocode para conseguir el código postal del mismo
         y la API de quecovid.es para conseguir las últimas restricciones de movilidad y sanitarias.
     </string>
     <string name="information_title">Información</string>

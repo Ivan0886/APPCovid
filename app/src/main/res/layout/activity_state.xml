@@ -7,100 +7,109 @@
     android:background="@drawable/ic_background_color">
 
     <ScrollView
-        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="@string/state_title"
-                android:textColor="@color/black"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/information_title"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/ic_info_title_state"
-                android:padding="10dp"
-                android:text="@string/information_title"
-                android:textColor="@color/primaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/information_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/ic_info_text_state"
-                android:padding="10dp"
-                android:text="@string/information_text"
-                android:textColor="@android:color/black" />
-
-            <TextView
-                android:id="@+id/notifications_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/ic_notif_title_state"
-                android:padding="10dp"
-                android:text="@string/notifications_title"
-                android:textColor="@color/primaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/notifications_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/ic_notif_text_state"
-                android:padding="10dp"
-                android:text="@string/notifications_text"
-                android:textColor="@android:color/black" />
-
-            <LinearLayout
-                android:layout_width="175dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button_covid"
-                    style="@style/TextAppearance.AppCompat.Widget.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:background="@drawable/ic_button_main"
-                    android:onClick="alertConfirmCovid"
-                    android:text="@string/button_covid"
-                    android:textColor="@color/black" />
-            </LinearLayout>
-
-        </LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="@string/state_title"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/information_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/ic_info_title_state"
+            android:padding="10dp"
+            android:text="@string/information_title"
+            android:textColor="@color/primaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/information_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/ic_info_text_state"
+            android:padding="10dp"
+            android:text="@string/information_text"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/notifications_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/ic_notif_title_state"
+            android:padding="10dp"
+            android:text="@string/notifications_title"
+            android:textColor="@color/primaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/notifications_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/ic_notif_text_state"
+            android:padding="10dp"
+            android:text="@string/notifications_text"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:layout_width="175dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_covid"
+                style="@style/TextAppearance.AppCompat.Widget.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@drawable/ic_button_main"
+                android:onClick="alertConfirmCovid"
+                android:text="@string/button_covid"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
