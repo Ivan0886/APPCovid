@@ -13,7 +13,6 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.example.appcovid.R;
@@ -53,37 +52,37 @@ public class RestrictionsActivity extends BaseActivity
     private RestrictionsAdapter mAdapter;
     private ListView mListView;
     public LocationManager locationManager;
-    List<Address> addresses;
+    private List<Address> mAddresses;
 
     /**
-     * Método que se ejecuta al arrancar la actividad. Se consultan los permisos
-     * y la localización del usuario
+     * Método que se ejecuta al arrancar la actividad.
      * @param savedInstanceState instancia de la actividad
      */
-    @SuppressLint("VisibleForTests")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
 
         // Referencia del ListView que hay en el layout
         mListView = findViewById(R.id.list_restrictions);
-
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    @Override
-    protected void onStart() {
-        super.onStart();
 
+    /**
+     * Método que se ejecuta al iniciar la actividad. Se consultan los permisos
+     * y la localización del usuario.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.P) @Override
+    protected void onStart()
+    {
+        super.onStart();
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+        {
+            @SuppressLint("VisibleForTests") FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -99,8 +98,7 @@ public class RestrictionsActivity extends BaseActivity
                     return false;
                 }
 
-                @NonNull
-                @Override
+                @NonNull @Override
                 public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener)
                 {
                     return null;
@@ -109,22 +107,21 @@ public class RestrictionsActivity extends BaseActivity
 
                 try
                 {
-                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    mAddresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                if (addresses != null) {
+                if (mAddresses != null)
+                {
                     loadData();
                 }
-
             });
         } else {
             launchAlert(R.string.error_title, R.string.error_text_service, RestrictionsActivity.this);
         }
-
-
     }
+
 
     /**
      * Método que contruye y hace la llamada a la API. También se encarga de mostrar los datos en pantalla
@@ -141,7 +138,9 @@ public class RestrictionsActivity extends BaseActivity
 
 
         // Se construye la llamada
-        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(addresses.get(0).getPostalCode(), "Sq8YKs9N9G3d8W7QGcryGMoRc");
+        Call<List<RestrictionFeed>> callAsync = restrictionsService.getRestrictions(
+                mAddresses.get(0).getPostalCode(),
+                "Sq8YKs9N9G3d8W7QGcryGMoRc");
 
         // Se hace la llamada a la API
         callAsync.enqueue(new Callback<List<RestrictionFeed>>()
@@ -174,10 +173,5 @@ public class RestrictionsActivity extends BaseActivity
                 launchAlert(R.string.error_title, R.string.error_text_service, RestrictionsActivity.this);
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 }

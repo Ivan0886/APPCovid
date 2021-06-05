@@ -15,8 +15,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.appcovid.R;
 import com.example.appcovid.model.BaseActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -48,7 +46,6 @@ public class StateActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
 
@@ -57,6 +54,7 @@ public class StateActivity extends BaseActivity
         // Se comprueba si han pasado 14 dias
         mButton.setEnabled(checkTimeConfirmationCovid());
     }
+
 
     /**
      * Método que devuelve si aún se tiene COVID-19
@@ -84,8 +82,8 @@ public class StateActivity extends BaseActivity
      */
     public void alertConfirmCovid(View v)
     {
-
-        if (haveNetworkConnection()) {
+        if (haveNetworkConnection())
+        {
             // Creación Title Alert
             TextView titleView = new TextView(StateActivity.this);
             titleView.setText(R.string.dialog_title_state);
@@ -123,7 +121,8 @@ public class StateActivity extends BaseActivity
     /**
      * Método que lanza la petición para notificar contactos recientes
      */
-    private void sendNotificationRequest() {
+    private void sendNotificationRequest()
+    {
         getmRef().child(Mac).get().addOnCompleteListener(task -> {
             if (task.isSuccessful())
             {
@@ -136,8 +135,8 @@ public class StateActivity extends BaseActivity
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot)
                             {
-                                    /* Se comprueba si existe el token en la BBDD. En caso de que exista,
-                                    se le manda la notificación creando un hilo nuevo */
+                                /* Se comprueba si existe el token en la BBDD. En caso de que exista,
+                                se le manda la notificación creando un hilo nuevo */
                                 if (snapshot.exists())
                                 {
                                     launchServerRequestThread(snapshot, o.getKey());
@@ -158,10 +157,11 @@ public class StateActivity extends BaseActivity
 
     /**
      * Método que ejecuta el hilo que se comunica con el servidor de notiifcaciones push
-     * @param snapshot
-     * @param key
+     * @param snapshot s
+     * @param key k
      */
-    private void launchServerRequestThread(DataSnapshot snapshot, String key) {
+    private void launchServerRequestThread(DataSnapshot snapshot, String key)
+    {
         new Thread()
         {
             @Override
@@ -197,15 +197,5 @@ public class StateActivity extends BaseActivity
     private void showToast()
     {
         Toast.makeText(StateActivity.this, R.string.toast_text_state, Toast.LENGTH_LONG).show();
-    }
-
-
-    /**
-     * Método que se ejecuta cuando se para la actividad
-     */
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
     }
 }

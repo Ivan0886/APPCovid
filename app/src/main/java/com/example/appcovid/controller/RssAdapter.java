@@ -73,8 +73,7 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.ViewHolder>
      * @param viewType v
      * @return new ViewHolder(view)
      */
-    @NonNull
-    @Override
+    @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         View view = mInflater.inflate(R.layout.element_news, parent, false);

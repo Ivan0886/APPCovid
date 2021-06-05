@@ -28,7 +28,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
-import com.example.appcovid.views.MainActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -142,11 +141,13 @@ public abstract class BaseActivity extends AppCompatActivity
 
 
     /**
-     * Método que se ejecuta cuando se inicia una actividad
+     * Método que se ejecuta cuando se inicia una actividad. Se comprueba el estado del Bluetooth
+     * y hace visible al dispositivo.
      */
     @Override
     protected void onStart()
     {
+        super.onStart();
         if (mBluetoothAdapter != null)
         {
             if (!mBluetoothAdapter.isEnabled())
@@ -159,9 +160,8 @@ public abstract class BaseActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
 
-
                 // Visibilidad de nuestro dispositivo
-                if(mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
                 {
                     Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                     discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
@@ -184,7 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity
                             }
 
                             if (haveNetworkConnection()) {
-                                // Get new FCM registration token
+                                // Coge el token FCM de registro
                                 String token = task.getResult();
                                 Log.d("FCM", "onComplete: " + token);
                                 mRef.child(Mac).child("FCM_token").setValue(token);
@@ -194,23 +194,27 @@ public abstract class BaseActivity extends AppCompatActivity
         } else {
             launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBTError, BaseActivity.this);
         }
-
-        super.onStart();
     }
 
-    protected boolean haveNetworkConnection() {
+
+    /**
+     * Método que comprueba si el nternet está activado
+     * @return haveConnectedWifi || haveConnectedMobile
+     */
+    protected boolean haveNetworkConnection()
+    {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
+        for (NetworkInfo ni : netInfo)
+        {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
+                if (ni.isConnected()) haveConnectedWifi = true;
+
             if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
+                if (ni.isConnected()) haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
@@ -220,6 +224,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * Método que lanza un alert distinto dependiendo de los parametros pasados
      * @param title título de la alerta
      * @param text texto de la alerta
+     * @param pContext contexto de la actividad
      * @deprecated startActivityForResult
      */
     protected void launchAlert(int title, int text, Context pContext)
@@ -374,8 +379,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * @param permissions array de permisos
      * @param grantResults permisos aceptados
      */
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
+    @TargetApi(Build.VERSION_CODES.M) @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

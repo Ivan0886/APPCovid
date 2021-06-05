@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.example.appcovid.R;
 import com.example.appcovid.model.BaseActivity;
-import com.google.firebase.database.DataSnapshot;
 
 /**
  * Clase que contiene la pantalla inicial de la App
@@ -20,11 +19,8 @@ import com.google.firebase.database.DataSnapshot;
 public class MainActivity extends BaseActivity
 {
     /**
-     * Método que se ejecuta al arrancar la App. Se comprueba si existe el valor "ALERTACOVID".
-     * Si no existe, se introduce. Si existe, se comprueba si ha habido cambios para lanzar una notificación
-     * si es necesario
-     * @param savedInstanceState instancia de la actividad
-     * @see DataSnapshot
+     * Método que se ejecuta al arrancar la App.
+     * @param savedInstanceState instancia de la actividad.
      */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -32,6 +28,7 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
 
     /**
      * Método que lanza una actividad distinta dependiendo del boton pulsado

@@ -29,19 +29,21 @@ public class NewsActivity extends BaseActivity
     private RssAdapter mAdapter;
 
     /**
-     * Método que se ejecuta al arrancar la actividad. Se construye el RecylerView
+     * Método que se ejecuta al arrancar la actividad.
      * @param savedInstanceState instancia de la actividad
      */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-
-
     }
 
+
+    /**
+     * Método que se ejecuta al iniciar la actividad. Se comprueba si
+     * el internet está activado y se construye el RecylerView.
+     */
     @Override
     protected void onStart() {
         super.onStart();

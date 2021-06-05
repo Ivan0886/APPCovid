@@ -29,25 +29,27 @@ public class WebNewsActivity extends BaseActivity
     private WebView mWebNews;
 
     /**
-     * Método que se ejecuta al arrancar la actividad. Se configura el WebView
+     * Método que se ejecuta al arrancar la actividad.
      * @param savedInstanceState instancia de la actividad
      */
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_news);
-
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (haveNetworkConnection()) {
 
+    /**
+     * Método que se ejecuta al iniciar la actividad. Se comprueba si
+     * el internet está activado y se configura el WebView.
+     */
+    @SuppressLint("SetJavaScriptEnabled") @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1) @Override
+    protected void onStart()
+    {
+        super.onStart();
+        if (haveNetworkConnection())
+        {
             Intent intent = getIntent();
 
             mWebNews = findViewById(R.id.webNews);
@@ -60,8 +62,7 @@ public class WebNewsActivity extends BaseActivity
 
             mWebNews.setWebChromeClient(new WebChromeClient()
             {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
                 public void onPermissionRequest(final PermissionRequest request)
                 {
                     request.grant(request.getResources());
@@ -71,6 +72,7 @@ public class WebNewsActivity extends BaseActivity
             launchAlert(R.string.error_title, R.string.error_text_service, WebNewsActivity.this);
         }
     }
+
 
     /**
      * Método que determina el comportamiento del botón "<-"

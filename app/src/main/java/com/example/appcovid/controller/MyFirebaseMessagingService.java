@@ -47,8 +47,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
      * Método que lanza una notificación cuando se recibe mensaje desde el servidor
      * @param remoteMessage mensaje
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O) @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage)
     {
         if (remoteMessage.getNotification() != null)
@@ -78,7 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void launchNotification(RemoteMessage message)
     {
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, BaseActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(

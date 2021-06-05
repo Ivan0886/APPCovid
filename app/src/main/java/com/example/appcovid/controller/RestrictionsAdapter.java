@@ -61,8 +61,7 @@ public class RestrictionsAdapter extends ArrayAdapter<RestrictionsItems>
      * @param position posición de la restricción
      * @return mRestrictionsItems.get(position)
      */
-    @Nullable
-    @Override
+    @Nullable @Override
     public RestrictionsItems getItem(int position) {
         return mRestrictionsItems.get(position);
     }
@@ -75,9 +74,7 @@ public class RestrictionsAdapter extends ArrayAdapter<RestrictionsItems>
      * @param parent p
      * @return view
      */
-    @SuppressLint("InflateParams")
-    @NonNull
-    @Override
+    @SuppressLint("InflateParams") @NonNull @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
 
