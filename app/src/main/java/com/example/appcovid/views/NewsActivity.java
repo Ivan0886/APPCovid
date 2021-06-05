@@ -35,38 +35,48 @@ public class NewsActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
-        pContext = NewsActivity.this;
 
-        // Se construye el RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.list_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
-        // Se construye el adaptador y se añade al RecyclerView
-        mAdapter = new RssAdapter(this);
-        recyclerView.setAdapter(mAdapter);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (haveNetworkConnection())
+        {
+            // Se construye el RecyclerView
+            RecyclerView recyclerView = findViewById(R.id.list_view);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Se construye el ViewModel
-        NewsViewModel dataNews = new ViewModelProvider(this).get(NewsViewModel.class);
+            // Se construye el adaptador y se añade al RecyclerView
+            mAdapter = new RssAdapter(this);
+            recyclerView.setAdapter(mAdapter);
 
-        // Se comprueba si los datos han cambiado
-        dataNews.getmData().observe(this, rssItems -> {
-            // Si la llamada ha ido bien
-            if(rssItems != null)
-            {
-                mAdapter.addData(new ArrayList<>(rssItems));
+            // Se construye el ViewModel
+            NewsViewModel dataNews = new ViewModelProvider(this).get(NewsViewModel.class);
 
-                // A cada item se le da su propio link de la noticia
-                mAdapter.setClickListener((view, position) -> {
-                    Intent i = new Intent(NewsActivity.this, WebNewsActivity.class);
-                    i.setData(Uri.parse(mAdapter.getItem(position).getmLink()));
-                    startActivity(i);
-                });
-            } else {
-                launchAlert(R.string.error_title, R.string.error_text_service);
-            }
-        });
+            // Se comprueba si los datos han cambiado
+            dataNews.getmData().observe(this, rssItems -> {
+                // Si la llamada ha ido bien
+                if(rssItems != null)
+                {
+                    mAdapter.addData(new ArrayList<>(rssItems));
+
+                    // A cada item se le da su propio link de la noticia
+                    mAdapter.setClickListener((view, position) -> {
+                        Intent i = new Intent(NewsActivity.this, WebNewsActivity.class);
+                        i.setData(Uri.parse(mAdapter.getItem(position).getmLink()));
+                        startActivity(i);
+                    });
+                } else {
+                    launchAlert(R.string.error_title, R.string.error_text_service, NewsActivity.this);
+                }
+            });
+        }else {
+            launchAlert(R.string.error_title, R.string.error_text_service, NewsActivity.this);
+        }
     }
 }

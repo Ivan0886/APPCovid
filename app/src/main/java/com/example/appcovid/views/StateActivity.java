@@ -48,17 +48,15 @@ public class StateActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_state);
-
-        pContext = StateActivity.this;
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(StateActivity.this);
         mButton = findViewById(R.id.button_covid);
         // Se comprueba si han pasado 14 dias
         mButton.setEnabled(checkTimeConfirmationCovid());
     }
-
 
     /**
      * Método que devuelve si aún se tiene COVID-19
@@ -86,91 +84,110 @@ public class StateActivity extends BaseActivity
      */
     public void alertConfirmCovid(View v)
     {
-        // Creación Title Alert
-        TextView titleView = new TextView(getApplicationContext());
-        titleView.setText(R.string.dialog_title_state);
-        titleView.setPadding(20, 30, 20, 30);
-        titleView.setTextSize(20F);
-        titleView.setBackgroundColor(Color.RED); // Rojo
-        titleView.setTextColor(Color.WHITE);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCustomTitle(titleView);
-        builder.setMessage(R.string.dialog_text_state);
-        builder.setCancelable(false);
+        if (haveNetworkConnection()) {
+            // Creación Title Alert
+            TextView titleView = new TextView(StateActivity.this);
+            titleView.setText(R.string.dialog_title_state);
+            titleView.setPadding(20, 30, 20, 30);
+            titleView.setTextSize(20F);
+            titleView.setBackgroundColor(Color.RED); // Rojo
+            titleView.setTextColor(Color.WHITE);
 
-        builder.setPositiveButton(R.string.text_si, (dialog, id) -> {
-            mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
-            mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCustomTitle(titleView);
+            builder.setMessage(R.string.dialog_text_state);
+            builder.setCancelable(false);
 
-            getmRef().child(Mac).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task)
-                {
-                    if (task.isSuccessful())
-                    {
-                        for (DataSnapshot o : task.getResult().getChildren())
-                        {
-                            if (!o.getKey().equals("FCM_token") )
-                            {
-                                getmRef().orderByKey().equalTo(o.getKey()).addListenerForSingleValueEvent(new ValueEventListener()
-                                {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot)
-                                    {
-                                        /* Se comprueba si existe el token en la BBDD. En caso de que exista,
-                                        se le manda la notificación creando un hilo nuevo */
-                                        if (snapshot.exists())
-                                        {
-                                            new Thread()
-                                            {
-                                                @Override
-                                                public void run()
-                                                {
-                                                    super.run();
-                                                    try
-                                                    {
-                                                        URL url = new URL("http://35.195.162.3:3000");
-                                                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            builder.setPositiveButton(R.string.text_si, (dialog, id) -> {
+                mButton.setEnabled(false); // Se deshabilita el boton durante 14 dias cuando se confirma el positivo COVID
+                mPreferences.edit().putString("fechaCovid", LocalDate.now().toString()).apply();
 
-                                                        connection.setDoOutput(true);
-                                                        connection.setChunkedStreamingMode(0);
-                                                        OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                                                        String s = (String) snapshot.child(o.getKey()).child("FCM_token").getValue();
-                                                        assert s != null;
-                                                        out.write(s.getBytes());
-                                                        out.flush();
-                                                        out.close();
+                sendNotificationRequest();
 
-                                                        connection.disconnect();
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }.start();
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error)
-                                    {
-                                        Toast.makeText(getApplicationContext(), "ERROR" + error.getDetails(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
+                dialog.dismiss();
+                showToast();
             });
 
-            dialog.dismiss();
-            showToast();
+            builder.setNegativeButton(R.string.text_no, (dialog, id) -> dialog.cancel());
+
+            Dialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }else {
+            launchAlert(R.string.error_title, R.string.error_text_service, StateActivity.this);
+        }
+
+    }
+
+    /**
+     * Método que lanza la petición para notificar contactos recientes
+     */
+    private void sendNotificationRequest() {
+        getmRef().child(Mac).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+            {
+                for (DataSnapshot o : task.getResult().getChildren())
+                {
+                    if (!o.getKey().equals("FCM_token") )
+                    {
+                        getmRef().orderByKey().equalTo(o.getKey()).addListenerForSingleValueEvent(new ValueEventListener()
+                        {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot)
+                            {
+                                    /* Se comprueba si existe el token en la BBDD. En caso de que exista,
+                                    se le manda la notificación creando un hilo nuevo */
+                                if (snapshot.exists())
+                                {
+                                    launchServerRequestThread(snapshot, o.getKey());
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error)
+                            {
+                                Toast.makeText(StateActivity.this, "ERROR" + error.getDetails(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            }
         });
+    }
 
-        builder.setNegativeButton(R.string.text_no, (dialog, id) -> dialog.cancel());
 
-        Dialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+    /**
+     * Método que ejecuta el hilo que se comunica con el servidor de notiifcaciones push
+     * @param snapshot
+     * @param key
+     */
+    private void launchServerRequestThread(DataSnapshot snapshot, String key) {
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                super.run();
+                try
+                {
+                    URL url = new URL("http://35.195.162.3:3000");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setDoOutput(true);
+                    connection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                    String s = (String) snapshot.child(key).child("FCM_token").getValue();
+                    assert s != null;
+                    out.write(s.getBytes());
+                    out.flush();
+                    out.close();
+
+                    connection.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
 
@@ -179,7 +196,7 @@ public class StateActivity extends BaseActivity
      */
     private void showToast()
     {
-        Toast.makeText(this, R.string.toast_text_state, Toast.LENGTH_LONG).show();
+        Toast.makeText(StateActivity.this, R.string.toast_text_state, Toast.LENGTH_LONG).show();
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.appcovid.views;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -10,7 +11,9 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.example.appcovid.R;
@@ -61,38 +64,47 @@ public class RestrictionsActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restrictions);
-
-        pContext = RestrictionsActivity.this;
 
         // Referencia del ListView que hay en el layout
         mListView = findViewById(R.id.list_restrictions);
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            FusedLocationProviderClient fusedLocationProviderClient = new FusedLocationProviderClient(RestrictionsActivity.this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            return;
-        }
-
-        fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken()
-        {
-            @Override
-            public boolean isCancellationRequested()
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
-                return false;
+                return;
             }
 
-            @NonNull
-            @Override
-            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener)
+            fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken()
             {
-                return null;
-            }}).addOnSuccessListener(location -> {
+                @Override
+                public boolean isCancellationRequested()
+                {
+                    return false;
+                }
+
+                @NonNull
+                @Override
+                public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener)
+                {
+                    return null;
+                }}).addOnSuccessListener(location -> {
                 Geocoder geocoder = new Geocoder(RestrictionsActivity.this, Locale.getDefault());
 
                 try
@@ -102,10 +114,17 @@ public class RestrictionsActivity extends BaseActivity
                     e.printStackTrace();
                 }
 
-                loadData();
-            });
-    }
+                if (addresses != null) {
+                    loadData();
+                }
 
+            });
+        } else {
+            launchAlert(R.string.error_title, R.string.error_text_service, RestrictionsActivity.this);
+        }
+
+
+    }
 
     /**
      * Método que contruye y hace la llamada a la API. También se encarga de mostrar los datos en pantalla
@@ -145,15 +164,20 @@ public class RestrictionsActivity extends BaseActivity
 
                     mListView.setAdapter(mAdapter);
                 } else {
-                    launchAlert(R.string.error_title, R.string.error_text);
+                    launchAlert(R.string.error_title, R.string.error_text_service, RestrictionsActivity.this);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<RestrictionFeed>> call, @NonNull Throwable t)
             {
-                launchAlert(R.string.error_title, R.string.error_text);
+                launchAlert(R.string.error_title, R.string.error_text_service, RestrictionsActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

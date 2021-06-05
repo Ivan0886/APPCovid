@@ -13,6 +13,8 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -50,17 +52,13 @@ import java.util.List;
  */
 public abstract class BaseActivity extends AppCompatActivity
 {
-    @SuppressLint("StaticFieldLeak") public static Context pContext;
     public static int REQUEST_BLUETOOTH = 1;
     public static String Mac = "";
-    public static boolean isAppWentToBg = true;
-    public static boolean isWindowFocused = false;
-    public static boolean isBackPressed = false;
     protected static final int ALL_PERMISSIONS_RESULT = 101;
     protected final static List<Object> mPermissionsRejected = new ArrayList<>();
     protected final static List<Object> mPermissions = new ArrayList<>();
     protected List<Object> mPermissionsToRequest;
-    private static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    protected static final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance("https://fctdam-45f92-default-rtdb.europe-west1.firebasedatabase.app/");
     private final ArrayList<String> mList = new ArrayList<>();
     private static DatabaseReference mRef;
@@ -149,128 +147,72 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     protected void onStart()
     {
-        try
+        if (mBluetoothAdapter != null)
         {
-            applicationWillEnterForeground();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        super.onStart();
-    }
-
-
-    /**
-     * Método que comprueba si la App está en primer plano.
-     * También se comprueba si el Bluetooth está desactivado y se activa nuestro dispositivo
-     * @throws NoSuchAlgorithmException excepción
-     */
-    private void applicationWillEnterForeground() throws NoSuchAlgorithmException
-    {
-        if (isAppWentToBg)
-        {
-            isAppWentToBg = false;
-
-            if (mBluetoothAdapter != null)
+            if (!mBluetoothAdapter.isEnabled())
             {
-                if (!mBluetoothAdapter.isEnabled())
-                {
-                    launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBT);
-                } else {
+                launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBT, BaseActivity.this);
+            } else {
+                try {
                     Mac = getMac();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
 
 
-                    // Visibilidad de nuestro dispositivo
-                    if(mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-                    {
-                        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-                        startActivity(discoverableIntent);
-                    }
+                // Visibilidad de nuestro dispositivo
+                if(mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                {
+                    Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+                    startActivity(discoverableIntent);
+                }
 
-                    // Detetar dispositivos
-                    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-                    registerReceiver(mReceiver, filter);
+                // Detetar dispositivos
+                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                registerReceiver(mReceiver, filter);
 
-                    mBluetoothAdapter.startDiscovery();
+                mBluetoothAdapter.startDiscovery();
 
-                    FirebaseMessaging.getInstance().getToken()
-                            .addOnCompleteListener(task -> {
-                                if (!task.isSuccessful())
-                                {
-                                    Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                                    return;
-                                }
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(task -> {
+                            if (!task.isSuccessful())
+                            {
+                                launchAlert(R.string.error_title, R.string.error_text_service, BaseActivity.this);
+                                return;
+                            }
 
+                            if (haveNetworkConnection()) {
                                 // Get new FCM registration token
                                 String token = task.getResult();
                                 Log.d("FCM", "onComplete: " + token);
                                 mRef.child(Mac).child("FCM_token").setValue(token);
-                            });
-                }
-            } else {
-                launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBTError);
+                            }
+                        });
             }
-        }
-    }
-
-
-
-
-    /**
-     * Método que se ejecuta cuando se para la App y se comprueba si está en segundo plano
-     */
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        applicationDidEnterBackground();
-    }
-
-
-    /**
-     * Método que comprueba si la App está en segundo plano
-     */
-    public void applicationDidEnterBackground()
-    {
-        if (!isWindowFocused)
-        {
-            isAppWentToBg = true;
-        }
-    }
-
-
-    /**
-     * Método que determina el comportamiento del botón "<-"
-     */
-    @Override
-    public void onBackPressed()
-    {
-        if (!(this instanceof MainActivity))
-        {
-            isBackPressed = true;
+        } else {
+            launchAlert(R.string.main_dialog_titleBT, R.string.main_dialog_textBTError, BaseActivity.this);
         }
 
-        super.onBackPressed();
+        super.onStart();
     }
 
+    protected boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
-    /**
-     * Método que se ejecuta al cambiar el foco
-     * @param hasFocus foco
-     */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus)
-    {
-        isWindowFocused = hasFocus;
-
-        if (isBackPressed && !hasFocus)
-        {
-            isBackPressed = false;
-            isWindowFocused = true;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-
-        super.onWindowFocusChanged(hasFocus);
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
 
@@ -280,7 +222,7 @@ public abstract class BaseActivity extends AppCompatActivity
      * @param text texto de la alerta
      * @deprecated startActivityForResult
      */
-    protected void launchAlert(int title, int text)
+    protected void launchAlert(int title, int text, Context pContext)
     {
         // Creación Title Alert
         TextView titleView = new TextView(pContext);
@@ -290,7 +232,7 @@ public abstract class BaseActivity extends AppCompatActivity
         titleView.setBackgroundColor(Color.RED); // Rojo
         titleView.setTextColor(Color.WHITE);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(pContext);
 
         EditText inputMAC = new EditText(this);
         inputMAC.setHint(R.string.text_hint_inputMac);
@@ -369,7 +311,7 @@ public abstract class BaseActivity extends AppCompatActivity
                 Mac = md5Mac(android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(), "bluetooth_address").toUpperCase());
             } else {
                 //Mac = "06:06:5A:43:40";
-                launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo);
+                launchAlert(R.string.main_dialog_titleMAC, R.string.main_dialog_textMACInfo, BaseActivity.this);
             }
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();

@@ -32,37 +32,45 @@ public class WebNewsActivity extends BaseActivity
      * Método que se ejecuta al arrancar la actividad. Se configura el WebView
      * @param savedInstanceState instancia de la actividad
      */
-    @SuppressLint("SetJavaScriptEnabled")
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_news);
 
-        pContext = WebNewsActivity.this;
-
-        Intent intent = getIntent();
-
-        mWebNews = findViewById(R.id.webNews);
-
-        WebSettings webNewsSettings = mWebNews.getSettings();
-        webNewsSettings.setJavaScriptEnabled(true);
-        webNewsSettings.setMediaPlaybackRequiresUserGesture(false);
-
-        mWebNews.loadUrl(String.valueOf(intent.getData()));
-
-        mWebNews.setWebChromeClient(new WebChromeClient()
-        {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onPermissionRequest(final PermissionRequest request)
-            {
-                request.grant(request.getResources());
-            }
-        });
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (haveNetworkConnection()) {
+
+            Intent intent = getIntent();
+
+            mWebNews = findViewById(R.id.webNews);
+
+            WebSettings webNewsSettings = mWebNews.getSettings();
+            webNewsSettings.setJavaScriptEnabled(true);
+            webNewsSettings.setMediaPlaybackRequiresUserGesture(false);
+
+            mWebNews.loadUrl(String.valueOf(intent.getData()));
+
+            mWebNews.setWebChromeClient(new WebChromeClient()
+            {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onPermissionRequest(final PermissionRequest request)
+                {
+                    request.grant(request.getResources());
+                }
+            });
+        }else {
+            launchAlert(R.string.error_title, R.string.error_text_service, WebNewsActivity.this);
+        }
+    }
 
     /**
      * Método que determina el comportamiento del botón "<-"

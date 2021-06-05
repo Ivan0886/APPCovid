@@ -31,9 +31,7 @@ public class MainActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pContext = MainActivity.this;
     }
-
 
     /**
      * Método que lanza una actividad distinta dependiendo del boton pulsado
