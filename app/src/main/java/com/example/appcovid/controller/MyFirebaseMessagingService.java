@@ -20,6 +20,7 @@ import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -66,7 +67,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     @Override
     public void onNewToken(@NonNull String token)
     {
-        BaseActivity.getmRef().child(BaseActivity.Mac).child("FCM_token").setValue(token);
+        if (!BaseActivity.Mac.equals(""))
+        {
+            BaseActivity.getmRef().child(BaseActivity.Mac).child("FCM_token").setValue(token);
+        }
     }
 
 

@@ -28,6 +28,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
+import com.example.appcovid.views.MainActivity;
+import com.example.appcovid.views.RestrictionsActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -183,11 +185,15 @@ public abstract class BaseActivity extends AppCompatActivity
                                 return;
                             }
 
-                            if (haveNetworkConnection()) {
+                            if (haveNetworkConnection())
+                            {
                                 // Coge el token FCM de registro
                                 String token = task.getResult();
                                 Log.d("FCM", "onComplete: " + token);
-                                mRef.child(Mac).child("FCM_token").setValue(token);
+                                if (!Mac.equals(""))
+                                {
+                                    mRef.child(Mac).child("FCM_token").setValue(token);
+                                }
                             }
                         });
             }
@@ -260,10 +266,11 @@ public abstract class BaseActivity extends AppCompatActivity
                 try
                 {
                     Mac = md5Mac(inputMAC.getText().toString().toUpperCase());
+                    PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
+                    startActivity(new Intent(this, MainActivity.class));
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-                //PreferenceManager.getDefaultSharedPreferences(this).edit().putString("MAC", Mac).apply();
             } else {
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBT, REQUEST_BLUETOOTH);
