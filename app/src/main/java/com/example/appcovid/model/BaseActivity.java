@@ -29,7 +29,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appcovid.R;
 import com.example.appcovid.views.MainActivity;
-import com.example.appcovid.views.RestrictionsActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -262,7 +261,6 @@ public abstract class BaseActivity extends AppCompatActivity
                 dialog.dismiss();
                 finish();
             } else if (text == R.string.main_dialog_textMACInfo) {
-                // TODO Hacer comprobaciones de longitud, etc en el texto introducido
                 try
                 {
                     Mac = md5Mac(inputMAC.getText().toString().toUpperCase());
