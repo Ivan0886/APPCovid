@@ -9,7 +9,7 @@
 
 ## Descripción
 
-Aplicación de información de protocolos COVID-19 basado en la ubicación del usuario. La aplicación registra cuando un usuario ha estado en contacto durante "X" tiempo con otro usuario en una BBDD (FireBase). En el caso de que uno de los contactos se contagie y lo avise, una notificación PUSH es mandada. La aplicación también tendrá una página de noticias relevantes a la situación de la pandemia y las posibles restricciones de su zona.
+Aplicación de información de protocolos COVID-19 basado en la ubicación del usuario. La aplicación registra cuando un usuario ha estado en contacto durante "X" tiempo con otro usuario en una BBDD (FireBase). En el caso de que uno de los contactos se contagie y lo avise, una notificación PUSH es mandada (se gestiona desde un servidor propio creado en node.js). La aplicación también tendrá una página de noticias relevantes a la situación de la pandemia y las posibles restricciones de su zona.
 
 
 ## Requisitos de la app
